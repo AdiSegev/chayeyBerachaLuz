@@ -104,6 +104,9 @@ function updateDayOptions() {
 		case 'shvii_pesach':
 			allowedDays = ['saturday', 'monday', 'wednesday', 'friday'];
 			break;
+		case 'tisha_beav':
+			allowedDays = ['sunday', 'tuesday', 'thursday'];
+			break;
         default:
             allowedDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     }
@@ -169,6 +172,9 @@ function generateWordDocument() {
 			case 'shavuot':
 			generateShavuotDocument();
 			break;
+			case 'tisha_beav':
+			generateTishaBeAvDocument();
+			break;
         // הוסף כאן קריאה לפונקציות עבור חגים אחרים
         default:
             console.error('Holiday not supported');
@@ -214,6 +220,10 @@ async function getPesachSunset(selectedHoliday) {
 		case 'shavuot':
 			holidayName = "Shavuot I";
 			break;
+		case 'tisha_beav':
+			holidayName = "Tish’a B’Av";
+				
+		break;
 	  }
     // Hebcal API URL to get the Jewish holiday dates for the given year
     const holidayUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname&geonameid=3448439&M=on&s=on&yt=H`;
