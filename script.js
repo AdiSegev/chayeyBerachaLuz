@@ -19,7 +19,77 @@
 
 var year = "";
 var numericYear;
+var currentHebrewYear = "";
+
+// פונקציה להמרת מספר לאותיות עבריות
+function convertToHebrewLetters(num) {
+    const hebrewLetters = {
+        1: 'א', 2: 'ב', 3: 'ג', 4: 'ד', 5: 'ה', 6: 'ו', 7: 'ז', 8: 'ח', 9: 'ט',
+        10: 'י', 20: 'כ', 30: 'ל', 40: 'מ', 50: 'נ', 60: 'ס', 70: 'ע', 80: 'פ', 90: 'צ',
+        100: 'ק', 200: 'ר', 300: 'ש', 400: 'ת'
+    };
+
+    let result = '';
+    let remaining = num % 1000; // נוריד את האלפים
+
+    // המרה לאותיות עבריות
+    [400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 20, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1].forEach(value => {
+        while (remaining >= value) {
+            result += hebrewLetters[value];
+            remaining -= value;
+        }
+    });
+
+    return result;
+}
+
+// פונקציה לטעינת שנות עבריות לרשימה
+function loadHebrewYears() {
+    const startYear = 5770; // תש"ע
+    const endYear = 6000;   // ת"ת
+    const datalist = document.getElementById('hebrew-years');
+    
+    for (let y = startYear; y <= endYear; y++) {
+        const option = document.createElement('option');
+        const hebrewYear = convertToHebrewLetters(y);
+        option.value = hebrewYear;
+        option.setAttribute('data-numeric', y);
+        datalist.appendChild(option);
+    }
+}
+
+// פונקציה לעדכון השנה בהתאם לבחירת המשתמש
+function updateSelectedYear() {
+    const input = document.getElementById('hebrew-year');
+    const selectedYear = input.value;
+    
+    if (selectedYear) {
+        // מצא את השנה המספרית המתאימה
+        const options = document.querySelectorAll('#hebrew-years option');
+        for (let option of options) {
+            if (option.value === selectedYear) {
+                numericYear = parseInt(option.getAttribute('data-numeric'));
+                year = selectedYear;
+                console.log("נבחרה שנה: " + year + " (" + numericYear + ")");
+                
+                // עדכן את זמן השקיעה בהתאם לשנה החדשה
+                const holiday = document.getElementById('holiday').value;
+                if (holiday) {
+                    getPesachSunset(holiday).then((holidaySunset) => {
+                        console.log("holiday sunset for selected year: " + holidaySunset);
+                        setSunsetTime(holidaySunset);
+                    });
+                }
+                break;
+            }
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+    // טען את רשימת השנים
+    loadHebrewYears();
+    
     // קבע את החג כראש השנה כברירת מחדל
     document.getElementById('holiday').value = 'rosh_hashana';
     updateDayOptions(); // עדכן את הימים האפשריים בהתאם לחג שנבחר
@@ -28,11 +98,16 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('day-of-week').value = 'sunday';
 	
 	document.getElementById('holiday').addEventListener('change', updateDayOptions);
+    document.getElementById('hebrew-year').addEventListener('change', updateSelectedYear);
+    document.getElementById('hebrew-year').addEventListener('input', updateSelectedYear);
 	
 	  getHebrewYear().then((hebrewYear) => {
 		  
   if (hebrewYear) {
 	  year = hebrewYear;
+      currentHebrewYear = hebrewYear;
+      // הגדר את השנה הנוכחית כברירת מחדל
+      document.getElementById('hebrew-year').value = hebrewYear;
     console.log("השנה העברית הנוכחית היא: " + hebrewYear);
 	
 	// Example usage: get the sunset time for Pesach in the year 2025
@@ -144,36 +219,38 @@ function addMinutesToTime(time, minutes) {
 // פונקציה כללית שמזמינה את יצירת המסמך לכל חג ספציפי
 function generateWordDocument() {
     const holiday = document.getElementById('holiday').value;
+    const selectedYear = document.getElementById('hebrew-year').value || year;
+    
     switch (holiday) {
         case 'rosh_hashana':
-            generateRoshHashanaDocument();
+            generateRoshHashanaDocument(selectedYear);
             break;
         case 'yom_kippur':
-            generateYomKippurDocument();
+            generateYomKippurDocument(selectedYear);
             break;
 			case 'sukkot':
-			generateSukkotDocument();
+			generateSukkotDocument(selectedYear);
 			break;
 			case 'shabat_chol_hamoed_sukkot':
-			generateShabbatHolHamoedSukkotDocument();
+			generateShabbatHolHamoedSukkotDocument(selectedYear);
 			break;
 			case 'simchat_torah':
-			generateSimchatTorahDocument();
+			generateSimchatTorahDocument(selectedYear);
 			break;
 			case 'pesach':
-			generatePesachDocument();
+			generatePesachDocument(selectedYear);
 			break;
 			case 'shabat_chol_hamoed_pesach':
-			generateShabbatHolHamoedPesachDocument();
+			generateShabbatHolHamoedPesachDocument(selectedYear);
 			break;
 			case 'shvii_pesach':
-			generateShviiPesachDocument();
+			generateShviiPesachDocument(selectedYear);
 			break;
 			case 'shavuot':
-			generateShavuotDocument();
+			generateShavuotDocument(selectedYear);
 			break;
 			case 'tisha_beav':
-			generateTishaBeAvDocument();
+			generateTishaBeAvDocument(selectedYear);
 			break;
         // הוסף כאן קריאה לפונקציות עבור חגים אחרים
         default:
@@ -226,7 +303,8 @@ async function getPesachSunset(selectedHoliday) {
 		break;
 	  }
     // Hebcal API URL to get the Jewish holiday dates for the given year
-    const holidayUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=now&month=x&ss=on&mf=on&c=on&geo=geoname&geonameid=3448439&M=on&s=on&yt=H`;
+    const yearToUse = numericYear || 'now';
+    const holidayUrl = `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=on&mod=on&nx=on&year=${yearToUse}&month=x&ss=on&mf=on&c=on&geo=geoname&geonameid=3448439&M=on&s=on&yt=H`;
     
     // Make an HTTP GET request to fetch the holiday dates using fetch
     const holidayResponse = await fetch(holidayUrl);

@@ -18,6 +18,14 @@
         <div class="card-body">
             <form id="prayer-times-form" class="mt-3">
                 <div class="mb-4">
+                    <label for="hebrew-year" class="form-label fw-bold">בחר שנה עברית:</label>
+                    <input list="hebrew-years" id="hebrew-year" class="form-control" placeholder="הקלד או בחר שנה עברית...">
+                    <datalist id="hebrew-years">
+                        <!-- השנים יוטענו אוטומטית דרך JavaScript -->
+                    </datalist>
+                </div>
+
+                <div class="mb-4">
                     <label for="holiday" class="form-label fw-bold">בחר חג:</label>
                     <select id="holiday" name="holiday" class="form-select">
                         <option value="rosh_hashana">ראש השנה</option>
