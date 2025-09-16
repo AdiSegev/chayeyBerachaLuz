@@ -6,12 +6,13 @@
     <title>יצירת לוח זמנים - חיי ברכה</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body dir="rtl" class="container" onload="updateDayOptions()">
 
     <header class="text-center mt-4 mb-5">
-        <h1 class="display-4 text-primary">יצירת לוח זמנים לחגים - מניין תימני מבוא חורון</h1>
+        <h1 class="display-4 text-primary">יצירת לוח זמנים לחגים</h1>
         <p class="lead text-secondary">אנא הזן את היום בו חל החג ואת זמן השקיעה על מנת לייצר את לוח הזמנים</p>
     </header>
 
@@ -65,15 +66,65 @@
                         <button type="button" class="btn btn-primary w-100 fw-bold" onclick="generateWordDocument()">צור מסמך Word</button>
                     </div>
                     <div class="col">
-                        <button type="button" class="btn btn-success w-100 fw-bold" onclick="generateImageDocument()">צור תמונה מעוצבת</button>
+                        <button type="button" class="btn btn-success w-100 fw-bold" onclick="openEditModal()">עריכה ויצירת תמונה</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- Modal עריכת זמני תפילה -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white position-relative">
+                    <button type="button" class="btn-close btn-close-white position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%);" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title w-100 text-center" id="editModalLabel">
+                        <i class="fas me-2"></i>עריכת זמני תפילה
+                    </h5>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-4">
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0 text-primary">
+                                        <i class="fas me-2"></i>עריכת זמנים
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="editTable"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="card h-100">
+                                <div class="card-header bg-light">
+                                    <h6 class="card-title mb-0 text-success">
+                                        <i class="fas me-2"></i>תצוגה מקדימה
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div id="previewContainer" style="height: auto; min-height: 400px; overflow: visible;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="fas me-2"></i>ביטול
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="generateFinalImage()" data-bs-dismiss="modal">
+                        <i class="fas me-2"></i>צור תמונה
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="text-center mt-5">
-        <p class="text-muted">&copy; 2024 - אפליקציית לוח זמנים לחגים יהודיים</p>
+        <p class="text-muted">&copy; 2024 - אפליקציית לוח זמנים לחגים יהודים</p>
     </footer>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/docx@7.1.0/build/index.js"></script>
@@ -81,6 +132,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 	<script src="https://unpkg.com/kosher-zmanim@0.8.2/dist/kosher-zmanim.min.js"></script>
     <script src="script.js"></script>
+    <script src="edit_functions.js"></script>
 	<script src="rosh_hashana.js"></script>
 	<script src="yom_kippur.js"></script>
 	<script src="sukkot.js"></script>

@@ -408,11 +408,325 @@ function getHebrewHolidayTitle(holiday) {
 }
 
 // פונקציה ליצירת תמונה מעוצבת
-function generateImageDocument() {
-    const holiday = document.getElementById('holiday').value;
-    const selectedYear = document.getElementById('hebrew-year').value || year;
+function generateImageDocument(customContent = null, customYear = null, customHoliday = null) {
+    const holiday = customHoliday || document.getElementById('holiday').value;
+    const selectedYear = customYear || document.getElementById('hebrew-year').value || year;
     
-    // קבלת התוכן של החג תחילה
+    // קבלת התוכן של החג - אם נשלח תוכן מותאם אישית, השתמש בו
+    let holidayContent = customContent;
+    
+    // אם לא נשלח תוכן מותאם אישית, יצר אותו לפי החג
+    if (!customContent) {
+        switch (holiday) {
+            case 'rosh_hashana':
+                if (typeof generateRoshHashanaContent === 'function') {
+                    holidayContent = generateRoshHashanaContent(selectedYear);
+                }
+                break;
+            case 'yom_kippur':
+                if (typeof generateYomKippurContent === 'function') {
+                    holidayContent = generateYomKippurContent(selectedYear);
+                }
+                break;
+            case 'sukkot':
+                if (typeof generateSukkotContent === 'function') {
+                    holidayContent = generateSukkotContent(selectedYear);
+                }
+                break;
+            case 'shabat_chol_hamoed_sukkot':
+                if (typeof generateShabbatHolHamoedSukkotContent === 'function') {
+                    holidayContent = generateShabbatHolHamoedSukkotContent(selectedYear);
+                }
+                break;
+            case 'simchat_torah':
+                if (typeof generateSimchatTorahContent === 'function') {
+                    holidayContent = generateSimchatTorahContent(selectedYear);
+                }
+                break;
+            case 'pesach':
+                if (typeof generatePesachContent === 'function') {
+                    holidayContent = generatePesachContent(selectedYear);
+                }
+                break;
+            case 'shabat_chol_hamoed_pesach':
+                if (typeof generateShabbatHolHamoedPesachContent === 'function') {
+                    holidayContent = generateShabbatHolHamoedPesachContent(selectedYear);
+                }
+                break;
+            case 'shvii_pesach':
+                if (typeof generateShviiPesachContent === 'function') {
+                    holidayContent = generateShviiPesachContent(selectedYear);
+                }
+                break;
+            case 'shavuot':
+                if (typeof generateShavuotContent === 'function') {
+                    holidayContent = generateShavuotContent(selectedYear);
+                }
+                break;
+            case 'tisha_beav':
+                if (typeof generateTishaBeAvContent === 'function') {
+                    holidayContent = generateTishaBeAvContent(selectedYear);
+                }
+                break;
+            default:
+                holidayContent = '<p>תוכן החג יוצג כאן</p>';
+        }
+    }
+    
+    // יצירת קנבס לעבודה עם תמונה
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 1000;
+    const ctx = canvas.getContext('2d');
+    
+    // טעינת תמונת הרקע
+    const backgroundImg = new Image();
+    backgroundImg.crossOrigin = "Anonymous";
+    backgroundImg.src = 'frame_template.png';
+    
+    backgroundImg.onload = function() {
+        // ציור תמונת הרקע על הקנבס
+        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+        
+        console.log('Using holiday content for image:', holidayContent);
+        
+        // חישוב גודל פונט דינמי לפי כמות הטקסט (הגדלה פי 1.5)
+        const textLength = holidayContent.replace(/<[^>]*>/g, '').length;
+        let contentFontSize;
+        if (textLength < 200) {
+            contentFontSize = 36;
+        } else if (textLength < 400) {
+            contentFontSize = 30;
+        } else if (textLength < 600) {
+            contentFontSize = 27;
+        } else if (textLength < 800) {
+            contentFontSize = 24;
+        } else {
+            contentFontSize = 21;
+        }
+        
+        // יצירת מיכל HTML עם התוכן המלא
+        const container = document.createElement('div');
+        container.style.cssText = `
+            width: 500px;
+            padding: 40px 20px 20px 20px;
+            font-family: 'Pfennig', 'Arial', sans-serif;
+            direction: rtl;
+            text-align: center;
+            background: transparent;
+            color: #2c5530;
+            line-height: 1.4;
+            position: absolute;
+            top: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+        `;
+        
+        // הוספת כותרת בשתי שורות
+        const titleContainer = document.createElement('div');
+        titleContainer.style.cssText = `
+            margin-bottom: 40px;
+            text-align: center;
+        `;
+        
+        const mainTitle = document.createElement('div');
+        mainTitle.style.cssText = `
+            color: #2c5530;
+            font-size: ${Math.min(contentFontSize + 9, 45)}px;
+            font-weight: bold;
+            font-family: 'Pfennig', 'Arial', sans-serif;
+            margin-bottom: 5px;
+        `;
+        mainTitle.textContent = 'זמני תפילה - מניין תימני';
+        
+        const subTitle = document.createElement('div');
+        subTitle.style.cssText = `
+            color: #2c5530;
+            font-size: ${Math.min(contentFontSize + 12, 48)}px;
+            font-weight: normal;
+            font-family: 'Pfennig', 'Arial', sans-serif;
+        `;
+        subTitle.textContent = `${getHebrewHolidayTitle(holiday)} ${selectedYear}`;
+        
+        titleContainer.appendChild(mainTitle);
+        titleContainer.appendChild(subTitle);
+        // הוספת בס"ד בפינה העליונה הימנית
+        const bsdElement = document.createElement('div');
+        bsdElement.style.cssText = `
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #2c5530;
+            font-size: ${Math.min(contentFontSize - 4, 24)}px;
+            font-weight: bold;
+            font-family: 'Pfennig', 'Arial', sans-serif;
+        `;
+        bsdElement.textContent = 'בס"ד';
+        container.appendChild(bsdElement);
+        
+        container.appendChild(titleContainer);
+        
+        // הוספת התוכן
+        const contentElement = document.createElement('div');
+        contentElement.style.cssText = `
+            font-size: ${contentFontSize}px;
+            color: #2c5530;
+        `;
+        contentElement.innerHTML = holidayContent;
+        
+        // תיקון רוחב טבלאות כדי למנוע שבירת שורות
+        const tables = contentElement.querySelectorAll('table');
+        tables.forEach(table => {
+            table.style.width = '100%';
+            table.style.maxWidth = 'none';
+            table.style.borderCollapse = 'separate';
+            table.style.borderSpacing = '0';
+            
+            const rows = table.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length === 2) {
+                    // שינוי פורמט הטבלה לשורה אחת עם מרווח קטן
+                    const firstCell = cells[0];
+                    const secondCell = cells[1];
+                    
+                    // יצירת תוכן משולב עם פונט מודגש לכותרת
+                    const cellText = firstCell.innerHTML.replace(/<[^>]*>/g, '');
+                    const timeText = secondCell.innerHTML;
+                    const combinedContent = `<strong>${cellText}</strong> ${timeText}`;
+                    
+                    // עדכון התא הראשון עם התוכן המשולב
+                    firstCell.innerHTML = combinedContent;
+                    firstCell.style.cssText = 'white-space: nowrap; text-align: center; padding: 4px 0;';
+                    
+                    // הסתרת התא השני
+                    secondCell.style.display = 'none';
+                }
+            });
+        });
+        
+        // תיקון כותרות h2 והוספת מרווחים
+        const headers = contentElement.querySelectorAll('h2');
+        headers.forEach((header, index) => {
+            header.style.whiteSpace = 'nowrap';
+            header.style.fontSize = `${Math.min(contentFontSize + 6, 42)}px`;
+            header.style.fontWeight = 'bold';
+            if (index > 0) {
+                header.style.marginTop = '30px';
+            }
+        });
+        
+        container.appendChild(contentElement);
+        
+        // הוספת איחול בחלק התחתון
+        const greetingElement = document.createElement('div');
+        greetingElement.style.cssText = `
+            margin-top: 30px;
+            text-align: center;
+            color: #2c5530;
+            font-size: ${Math.max(contentFontSize - 8, 16)}px;
+            font-weight: bold;
+            font-style: italic;
+            font-family: 'Pfennig', 'Arial', sans-serif;
+        `;
+        
+        // קביעת האיחול לפי החג
+        let greetingText = '';
+        switch (holiday) {
+            case 'rosh_hashana':
+                greetingText = 'בברכת תכתבו ותחתמו בספר החיים ובספר הזיכרון';
+                break;
+            case 'yom_kippur':
+                greetingText = 'תבושרו במחילה וסליחה וכפרה';
+                break;
+            case 'tisha_beav':
+                greetingText = 'בבניין ירושלים ננוחם';
+                break;
+            default:
+                greetingText = 'תוסיפו שנים רבות ומועדים טובים';
+                break;
+        }
+        
+        greetingElement.textContent = greetingText;
+        container.appendChild(greetingElement);
+        
+        // הסרת הטקסט התחתון
+        
+        // הוספה זמנית למסמך
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        document.body.appendChild(container);
+        
+        // המתנה קצרה לטעינת הסגנונות ואז המרה לתמונה
+        setTimeout(() => {
+            html2canvas(container, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(contentCanvas => {
+                // ציור התוכן ממורכז ברוחב אבל מתחיל מלמעלה
+                const x = (canvas.width - contentCanvas.width / 2) / 2;
+                const y = 140; // מרווח מוגדל מלמעלה
+                ctx.drawImage(contentCanvas, x, y, contentCanvas.width / 2, contentCanvas.height / 2);
+                
+                // הורדת התמונה
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                link.download = `זמני_תפילה_${getHolidayName(holiday)}_${selectedYear}.png`;
+                link.href = imgData;
+                link.click();
+                
+                // ניקוי
+                document.body.removeChild(container);
+            }).catch(error => {
+                console.error('שגיאה ביצירת התמונה:', error);
+                document.body.removeChild(container);
+                alert('שגיאה ביצירת התמונה. אנא נסה שוב.');
+            });
+        }, 500);
+    };
+    
+    backgroundImg.onerror = function() {
+        alert('שגיאה בטעינת תמונת הרקע. אנא ודא שקובץ frame_template.png קיים בתיקיית הפרויקט.');
+    };
+}
+
+// משתנה גלובלי לשמירת הנתונים הערוכים
+let editedPrayerTimes = {};
+
+// פתיחת modal עריכה
+function openEditModal() {
+    const selectedYear = document.getElementById('hebrew-year').value;
+    const holiday = document.getElementById('holiday').value;
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+    
+    if (!selectedYear || !holiday || !selectedDay || !sunsetTime) {
+        alert('אנא מלא את כל השדות לפני עריכת הזמנים');
+        return;
+    }
+    
+    // קבלת התוכן המעובד לפי הלוגיקה
+    const holidayContent = getHolidayContentForEdit(holiday, selectedYear);
+    
+    // חילוץ זמני תפילה מה-HTML
+    const prayerTimes = extractPrayerTimesFromHTML(holidayContent);
+    
+    // יצירת טבלת עריכה
+    createEditTable(prayerTimes);
+    
+    // עדכון תצוגה מקדימה
+    updatePreview();
+    
+    // פתיחת ה-modal
+    const modal = new bootstrap.Modal(document.getElementById('editModal'));
+    modal.show();
+}
+
+// פונקציה לקבלת תוכן החג לעריכה
+function getHolidayContentForEdit(holiday, selectedYear) {
     let holidayContent = '';
     switch (holiday) {
         case 'rosh_hashana':
@@ -468,124 +782,10 @@ function generateImageDocument() {
         default:
             holidayContent = '<p>תוכן החג יוצג כאן</p>';
     }
-    
-    // יצירת קנבס לעבודה עם תמונה
-    const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 1000;
-    const ctx = canvas.getContext('2d');
-    
-    // טעינת תמונת הרקע
-    const backgroundImg = new Image();
-    backgroundImg.crossOrigin = "Anonymous";
-    backgroundImg.src = 'frame_template.png';
-    
-    backgroundImg.onload = function() {
-        // ציור תמונת הרקע על הקנבס
-        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-        
-        // חישוב גודל פונט דינמי לפי כמות הטקסט
-        const textLength = holidayContent.replace(/<[^>]*>/g, '').length;
-        let contentFontSize;
-        if (textLength < 200) {
-            contentFontSize = 24;
-        } else if (textLength < 400) {
-            contentFontSize = 20;
-        } else if (textLength < 600) {
-            contentFontSize = 18;
-        } else if (textLength < 800) {
-            contentFontSize = 16;
-        } else {
-            contentFontSize = 14;
-        }
-        
-        // יצירת מיכל HTML עם התוכן המלא
-        const container = document.createElement('div');
-        container.style.cssText = `
-            width: 450px;
-            padding: 40px 30px 20px 30px;
-            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
-            direction: rtl;
-            text-align: center;
-            background: transparent;
-            margin: 0;
-            position: relative;
-        `;
-        
-        // הוספת כותרת
-        const title = document.createElement('h1');
-        title.style.cssText = `
-            color: #2c5530;
-            font-size: ${Math.min(contentFontSize + 6, 30)}px;
-            margin-bottom: 20px;
-            font-weight: bold;
-            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
-        `;
-        title.innerHTML = `זמני תפילה ${getHebrewHolidayTitle(holiday)} ${selectedYear}`;
-        container.appendChild(title);
-        
-        // הוספת התוכן של החג
-        const content = document.createElement('div');
-        content.style.cssText = `
-            font-size: ${contentFontSize}px;
-            line-height: 1.4;
-            color: #333;
-            text-align: center;
-            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
-        `;
-        content.innerHTML = holidayContent;
-        container.appendChild(content);
-        
-        // הוספת תחתית
-        const footer = document.createElement('div');
-        footer.style.cssText = `
-            margin-top: 25px;
-            font-size: ${Math.max(contentFontSize - 4, 10)}px;
-            color: #666;
-            font-style: italic;
-            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
-        `;
-        footer.innerHTML = 'מניין תימני מבוא חורון';
-        container.appendChild(footer);
-        
-        // הוספה זמנית למסמך
-        container.style.position = 'absolute';
-        container.style.left = '-9999px';
-        container.style.top = '0';
-        document.body.appendChild(container);
-        
-        // המתנה קצרה לטעינת הסגנונות ואז המרה לתמונה
-        setTimeout(() => {
-            html2canvas(container, {
-                backgroundColor: null,
-                scale: 2,
-                useCORS: true,
-                allowTaint: true
-            }).then(contentCanvas => {
-                // ציור התוכן ממורכז ברוחב אבל מתחיל מלמעלה
-                const x = (canvas.width - contentCanvas.width / 2) / 2;
-                const y = 140; // מרווח מוגדל מלמעלה
-                ctx.drawImage(contentCanvas, x, y, contentCanvas.width / 2, contentCanvas.height / 2);
-                
-                // הורדת התמונה
-                const imgData = canvas.toDataURL('image/png', 1.0);
-                const link = document.createElement('a');
-                link.download = `זמני_תפילה_${getHolidayName(holiday)}_${selectedYear}.png`;
-                link.href = imgData;
-                link.click();
-                
-                // ניקוי
-                document.body.removeChild(container);
-            }).catch(error => {
-                console.error('שגיאה ביצירת התמונה:', error);
-                document.body.removeChild(container);
-                alert('שגיאה ביצירת התמונה. אנא נסה שוב.');
-            });
-        }, 500);
-    };
-    
-    backgroundImg.onerror = function() {
-        alert('שגיאה בטעינת תמונת הרקע. אנא ודא שקובץ frame_template.png קיים בתיקיית הפרויקט.');
-    };
+    return holidayContent;
 }
 
+// יצירת תמונה סופית מהנתונים הערוכים
+function generateFinalImage() {
+    generateFinalImageFromEdited();
+}
