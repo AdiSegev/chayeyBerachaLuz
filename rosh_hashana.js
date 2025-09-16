@@ -1,5 +1,111 @@
 // rosh_hashana.js
 
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateRoshHashanaContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    let firstDayTitle = "יום טוב ראשון";
+    let secondDayTitle = "יום טוב שני";
+
+    if (selectedDay === 'thursday') {
+        times = {
+            minchaErevYomtov: addMinutesToTime(sunsetTime, -20),
+            shachrit: "7:30",
+            tehillim: addMinutesToTime(sunsetTime, -80),
+            minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
+            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
+            minchaYomTovSheni: addMinutesToTime(sunsetTime, -35),
+            shirHashirim: sunsetTime,
+            lechuNeranena: addMinutesToTime(sunsetTime, 25)
+        };
+    } else if (selectedDay === 'monday' || selectedDay === 'tuesday') {
+        times = {
+            minchaErevYomtov: addMinutesToTime(sunsetTime, -20),
+            shachrit: "7:30",
+            tehillim: addMinutesToTime(sunsetTime, -80),
+            minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
+            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
+            tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
+            minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+        };
+    } else if (selectedDay === 'saturday') {
+        times = {
+            shirHashirim: addMinutesToTime(sunsetTime, -55),
+            minchaErevYomtov: addMinutesToTime(sunsetTime, -30),
+            shachrit: "7:30",
+            tehillim: "16:00",
+            minchaRoshHashana: "17:00",
+            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
+            tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
+            minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <h2 style="color: #2c5530; margin-bottom: 20px;">${firstDayTitle}</h2>
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    // זמני היום הראשון
+    if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב יו"ט:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevYomtov}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>תהילים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.tehillim}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaRoshHashana}</td></tr>
+        `;
+    } else {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב יו"ט:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevYomtov}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>תהילים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.tehillim}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaRoshHashana}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+            </table>
+            <br><br>
+            <h2 style="color: #2c5530; margin-bottom: 20px;">${secondDayTitle}</h2>
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    // זמני היום השני
+    if (selectedDay === 'thursday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לכו נרננה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechuNeranena}</td></tr>
+        `;
+    } else {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>תהילים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.tehillimYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni2}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                בברכת תכתבו ותחתמו בספר החיים ובספר הזיכרון
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateRoshHashanaDocument() {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;

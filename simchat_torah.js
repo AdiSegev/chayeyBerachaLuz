@@ -1,5 +1,68 @@
 // simchat_torah.js
 
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateSimchatTorahContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    if (selectedDay === 'monday' || selectedDay === 'tuesday' || selectedDay === 'thursday') {
+        times = {
+            minchaErevChag: addMinutesToTime(sunsetTime, -15),
+            shachrit: "7:30",
+            hakafot: "12:30",
+            minchaAfterHakafot: "מנחה לאחר ההקפות",
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+        };
+    } else if (selectedDay === 'saturday') {
+        times = {
+            shirHashirim: addMinutesToTime(sunsetTime, -50),
+            minchaErevChag: addMinutesToTime(sunsetTime, -25),
+            shachrit: "7:30",
+            hakafot: "12:30",
+            minchaAfterHakafot: "מנחה לאחר ההקפות",
+            kohelet: addMinutesToTime(sunsetTime, -25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>הקפות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.hakafot}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaAfterHakafot}</td></tr>
+    `;
+
+    if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קהלת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kohelet}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiChag}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                שמחת תורה ושמחת בית השואבה
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateSimchatTorahDocument() {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;
@@ -15,7 +78,7 @@ function generateSimchatTorahDocument() {
         };
     } else if (selectedDay === 'saturday') {
         times = {
-            shirHashirim: addMinutesToTime(sunsetTime, -45),
+            shirHashirim: addMinutesToTime(sunsetTime, -50),
             minchaErevChag: addMinutesToTime(sunsetTime, -25),
             shachrit: "7:30",
             hakafot: "12:30",

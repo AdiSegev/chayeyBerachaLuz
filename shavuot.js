@@ -1,4 +1,84 @@
-// shvii_pesach.js
+// shavuot.js
+
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateShavuotContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    if (selectedDay === 'monday' || selectedDay === 'wednesday') {
+        times = {
+            minchaErevChag: addMinutesToTime(sunsetTime, -15),
+            shachrit: "8:00",
+            rut: addMinutesToTime(sunsetTime, -75),
+            mincha: addMinutesToTime(sunsetTime, -15),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+        };
+    } else if (selectedDay === 'sunday') {
+        times = {
+            mizmorShelChag: addMinutesToTime(sunsetTime, 5),
+            shachrit: "8:00",
+            rut: addMinutesToTime(sunsetTime, -85),
+            mincha: addMinutesToTime(sunsetTime, -15),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+        };
+    } else if (selectedDay === 'friday') {
+        times = {
+            minchaErevChag: addMinutesToTime(sunsetTime, -15),
+            shachrit: "8:00",
+            rut: addMinutesToTime(sunsetTime, -120),
+            shirHashirim: addMinutesToTime(sunsetTime, -55),
+            mincha: addMinutesToTime(sunsetTime, -35)
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    if (selectedDay === 'sunday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מזמור של חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mizmorShelChag}</td></tr>
+        `;
+    } else {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>רות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.rut}</td></tr>
+    `;
+
+    if (selectedDay === 'friday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+    `;
+
+    if (selectedDay !== 'friday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiChag}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                חג שבועות - זמן מתן תורתנו
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
 
 function generateShavuotDocument() {
     const selectedDay = document.getElementById('day-of-week').value;

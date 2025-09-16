@@ -1,5 +1,68 @@
 // yom_kippur.js
 
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateYomKippurContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    if (selectedDay === 'saturday') {
+        times = {
+            minchaErevKipur: "13:00",
+            kabalatShabbat: addMinutesToTime(sunsetTime, -25),
+            lechaEli: addMinutesToTime(sunsetTime, -10),
+            shachrit: "7:30",
+            mincha: addMinutesToTime(sunsetTime, -135),
+            neilah: addMinutesToTime(sunsetTime, -40),
+            arvit: addMinutesToTime(sunsetTime, 20),
+            endTzom: addMinutesToTime(sunsetTime, 33)
+        };
+    } else {
+        times = {
+            minchaErevKipur: "13:00",
+            lechaEli: addMinutesToTime(sunsetTime, -10),
+            shachrit: "7:30",
+            mincha: addMinutesToTime(sunsetTime, -135),
+            neilah: addMinutesToTime(sunsetTime, -40),
+            arvit: addMinutesToTime(sunsetTime, 20),
+            endTzom: addMinutesToTime(sunsetTime, 33)
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    // זמני יום כיפור
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב יום כיפור:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevKipur}</td></tr>
+    `;
+
+    if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קבלת שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kabalatShabbat}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לכה אלי:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechaEli}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>נעילה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.neilah}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>סיום הצום:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.endTzom}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                גמר חתימה טובה
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateYomKippurDocument() {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;

@@ -1,4 +1,38 @@
-// shabbat_hol_hamoed_sukkot.js
+// shabat_chol_hamoed_sukkot.js
+
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateShabbatHolHamoedSukkotContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times = {
+        shirHashirim: addMinutesToTime(sunsetTime, -40),
+        minchaErevShabbat: addMinutesToTime(sunsetTime, -15),
+        shachrit: "8:00",
+        kohelet: addMinutesToTime(sunsetTime, -150),
+        mincha: addMinutesToTime(sunsetTime, -90),
+        arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 30)
+    };
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevShabbat}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קהלת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kohelet}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiShabbat}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                שבת שלום וחג שמח
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
 
 function generateShabbatHolHamoedSukkotDocument() {
     const sunsetTime = document.getElementById('sunset-time').value;

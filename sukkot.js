@@ -1,5 +1,61 @@
 // sukkot.js
 
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateSukkotContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    if (selectedDay === 'thursday' || selectedDay === 'monday' || selectedDay === 'tuesday') {
+        times = {
+            minchaErevChag: addMinutesToTime(sunsetTime, -15),
+            shachrit: "8:00",
+            kohelet: addMinutesToTime(sunsetTime, -80),
+            mincha: addMinutesToTime(sunsetTime, -20),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            shachritCholHamoed: "7:00"
+        };
+    } else if (selectedDay === 'saturday') {
+        times = {
+            shirHashirim: addMinutesToTime(sunsetTime, -40),
+            minchaErevChag: addMinutesToTime(sunsetTime, -15),
+            shachrit: "8:00",
+            kohelet: addMinutesToTime(sunsetTime, -150),
+            mincha: addMinutesToTime(sunsetTime, -90),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
+            shachritCholHamoed: "7:00"
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+    `;
+
+    if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קהלת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kohelet}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiChag}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית חול המועד:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritCholHamoed}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                חג שמח ומועדים לשמחה
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateSukkotDocument() {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;

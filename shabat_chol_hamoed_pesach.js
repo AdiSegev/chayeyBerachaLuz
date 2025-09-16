@@ -1,3 +1,37 @@
+// shabat_chol_hamoed_pesach.js
+
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateShabbatHolHamoedPesachContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times = {
+        shirHashirim: addMinutesToTime(sunsetTime, -55),
+        minchaErevShabbat: addMinutesToTime(sunsetTime, -30),
+        shachrit: "7:30",
+        mincha: addMinutesToTime(sunsetTime, -20),
+        arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 25)
+    };
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevShabbat}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiShabbat}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                שבת חול המועד פסח - זמן חרותנו
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateShabbatHolHamoedPesachDocument() {
     const sunsetTime = document.getElementById('sunset-time').value;
 

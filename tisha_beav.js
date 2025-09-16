@@ -1,5 +1,42 @@
 // tisha_beav.js
 
+// פונקציה שמחזירה את התוכן HTML בלבד
+function generateTishaBeAvContent(selectedYear) {
+    const selectedDay = document.getElementById('day-of-week').value;
+    const sunsetTime = document.getElementById('sunset-time').value;
+
+    let times;
+    if (selectedDay === 'sunday') {
+        times = {
+            arvitLeilTishaBeav: addMinutesToTime(sunsetTime, 50),
+            shachrit: "7:30",
+            mincha: addMinutesToTime(sunsetTime, -45)
+        };
+    } else { // selectedDay === 'tuesday' || selectedDay === 'thursday'
+        times = {
+            arvitLeilTishaBeav: addMinutesToTime(sunsetTime, 20),
+            shachrit: "7:30",
+            mincha: addMinutesToTime(sunsetTime, -45)
+        };
+    }
+
+    let htmlContent = `
+        <div style="text-align: center;">
+            <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית ליל תשעה באב:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitLeilTishaBeav}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+            </table>
+            <br><br>
+            <p style="color: #2c5530; font-weight: bold; font-style: italic;">
+                תשעה באב - צום קל ומועיל
+            </p>
+        </div>
+    `;
+
+    return htmlContent;
+}
+
 function generateTishaBeAvDocument() {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;

@@ -373,3 +373,219 @@ async function getPesachSunset(selectedHoliday) {
   }
 }
 
+// פונקציה להמרת קוד החג לשם החג בעברית
+function getHolidayName(holiday) {
+    switch (holiday) {
+        case 'rosh_hashana': return "ראש_השנה";
+        case 'yom_kippur': return "יום_כיפור";
+        case 'sukkot': return "סוכות";
+        case 'shabat_chol_hamoed_sukkot': return "שבת_חול_המועד_סוכות";
+        case 'simchat_torah': return "שמחת_תורה";
+        case 'pesach': return "פסח";
+        case 'shabat_chol_hamoed_pesach': return "שבת_חול_המועד_פסח";
+        case 'shvii_pesach': return "שביעי_של_פסח";
+        case 'shavuot': return "שבועות";
+        case 'tisha_beav': return "תשעה_באב";
+        default: return "חג";
+    }
+}
+
+// פונקציה להצגת שם החג בעברית בכותרת
+function getHebrewHolidayTitle(holiday) {
+    switch (holiday) {
+        case 'rosh_hashana': return "ראש השנה";
+        case 'yom_kippur': return "יום כיפור";
+        case 'sukkot': return "סוכות";
+        case 'shabat_chol_hamoed_sukkot': return "שבת חול המועד סוכות";
+        case 'simchat_torah': return "שמחת תורה";
+        case 'pesach': return "פסח";
+        case 'shabat_chol_hamoed_pesach': return "שבת חול המועד פסח";
+        case 'shvii_pesach': return "שביעי של פסח";
+        case 'shavuot': return "שבועות";
+        case 'tisha_beav': return "תשעה באב";
+        default: return "חג";
+    }
+}
+
+// פונקציה ליצירת תמונה מעוצבת
+function generateImageDocument() {
+    const holiday = document.getElementById('holiday').value;
+    const selectedYear = document.getElementById('hebrew-year').value || year;
+    
+    // קבלת התוכן של החג תחילה
+    let holidayContent = '';
+    switch (holiday) {
+        case 'rosh_hashana':
+            if (typeof generateRoshHashanaContent === 'function') {
+                holidayContent = generateRoshHashanaContent(selectedYear);
+            }
+            break;
+        case 'yom_kippur':
+            if (typeof generateYomKippurContent === 'function') {
+                holidayContent = generateYomKippurContent(selectedYear);
+            }
+            break;
+        case 'sukkot':
+            if (typeof generateSukkotContent === 'function') {
+                holidayContent = generateSukkotContent(selectedYear);
+            }
+            break;
+        case 'shabat_chol_hamoed_sukkot':
+            if (typeof generateShabbatHolHamoedSukkotContent === 'function') {
+                holidayContent = generateShabbatHolHamoedSukkotContent(selectedYear);
+            }
+            break;
+        case 'simchat_torah':
+            if (typeof generateSimchatTorahContent === 'function') {
+                holidayContent = generateSimchatTorahContent(selectedYear);
+            }
+            break;
+        case 'pesach':
+            if (typeof generatePesachContent === 'function') {
+                holidayContent = generatePesachContent(selectedYear);
+            }
+            break;
+        case 'shabat_chol_hamoed_pesach':
+            if (typeof generateShabbatHolHamoedPesachContent === 'function') {
+                holidayContent = generateShabbatHolHamoedPesachContent(selectedYear);
+            }
+            break;
+        case 'shvii_pesach':
+            if (typeof generateShviiPesachContent === 'function') {
+                holidayContent = generateShviiPesachContent(selectedYear);
+            }
+            break;
+        case 'shavuot':
+            if (typeof generateShavuotContent === 'function') {
+                holidayContent = generateShavuotContent(selectedYear);
+            }
+            break;
+        case 'tisha_beav':
+            if (typeof generateTishaBeAvContent === 'function') {
+                holidayContent = generateTishaBeAvContent(selectedYear);
+            }
+            break;
+        default:
+            holidayContent = '<p>תוכן החג יוצג כאן</p>';
+    }
+    
+    // יצירת קנבס לעבודה עם תמונה
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 1000;
+    const ctx = canvas.getContext('2d');
+    
+    // טעינת תמונת הרקע
+    const backgroundImg = new Image();
+    backgroundImg.crossOrigin = "Anonymous";
+    backgroundImg.src = 'frame_template.png';
+    
+    backgroundImg.onload = function() {
+        // ציור תמונת הרקע על הקנבס
+        ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+        
+        // חישוב גודל פונט דינמי לפי כמות הטקסט
+        const textLength = holidayContent.replace(/<[^>]*>/g, '').length;
+        let contentFontSize;
+        if (textLength < 200) {
+            contentFontSize = 24;
+        } else if (textLength < 400) {
+            contentFontSize = 20;
+        } else if (textLength < 600) {
+            contentFontSize = 18;
+        } else if (textLength < 800) {
+            contentFontSize = 16;
+        } else {
+            contentFontSize = 14;
+        }
+        
+        // יצירת מיכל HTML עם התוכן המלא
+        const container = document.createElement('div');
+        container.style.cssText = `
+            width: 450px;
+            padding: 40px 30px 20px 30px;
+            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
+            direction: rtl;
+            text-align: center;
+            background: transparent;
+            margin: 0;
+            position: relative;
+        `;
+        
+        // הוספת כותרת
+        const title = document.createElement('h1');
+        title.style.cssText = `
+            color: #2c5530;
+            font-size: ${Math.min(contentFontSize + 6, 30)}px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
+        `;
+        title.innerHTML = `זמני תפילה ${getHebrewHolidayTitle(holiday)} ${selectedYear}`;
+        container.appendChild(title);
+        
+        // הוספת התוכן של החג
+        const content = document.createElement('div');
+        content.style.cssText = `
+            font-size: ${contentFontSize}px;
+            line-height: 1.4;
+            color: #333;
+            text-align: center;
+            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
+        `;
+        content.innerHTML = holidayContent;
+        container.appendChild(content);
+        
+        // הוספת תחתית
+        const footer = document.createElement('div');
+        footer.style.cssText = `
+            margin-top: 25px;
+            font-size: ${Math.max(contentFontSize - 4, 10)}px;
+            color: #666;
+            font-style: italic;
+            font-family: 'Noto Sans Hebrew', 'Arial', sans-serif;
+        `;
+        footer.innerHTML = 'מניין תימני מבוא חורון';
+        container.appendChild(footer);
+        
+        // הוספה זמנית למסמך
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        container.style.top = '0';
+        document.body.appendChild(container);
+        
+        // המתנה קצרה לטעינת הסגנונות ואז המרה לתמונה
+        setTimeout(() => {
+            html2canvas(container, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(contentCanvas => {
+                // ציור התוכן ממורכז ברוחב אבל מתחיל מלמעלה
+                const x = (canvas.width - contentCanvas.width / 2) / 2;
+                const y = 140; // מרווח מוגדל מלמעלה
+                ctx.drawImage(contentCanvas, x, y, contentCanvas.width / 2, contentCanvas.height / 2);
+                
+                // הורדת התמונה
+                const imgData = canvas.toDataURL('image/png', 1.0);
+                const link = document.createElement('a');
+                link.download = `זמני_תפילה_${getHolidayName(holiday)}_${selectedYear}.png`;
+                link.href = imgData;
+                link.click();
+                
+                // ניקוי
+                document.body.removeChild(container);
+            }).catch(error => {
+                console.error('שגיאה ביצירת התמונה:', error);
+                document.body.removeChild(container);
+                alert('שגיאה ביצירת התמונה. אנא נסה שוב.');
+            });
+        }, 500);
+    };
+    
+    backgroundImg.onerror = function() {
+        alert('שגיאה בטעינת תמונת הרקע. אנא ודא שקובץ frame_template.png קיים בתיקיית הפרויקט.');
+    };
+}
+
