@@ -40,22 +40,184 @@ function convertToHebrewLetters(num) {
         }
     });
 
+    // הוספת גרשיים לפני האות האחרונה
+    if (result.length > 1) {
+        result = result.slice(0, -1) + '"' + result.slice(-1);
+    }
+    
     return result;
 }
 
+// מערך גלובלי לשמירת כל השנים העבריות
+let allHebrewYears = [];
+
 // פונקציה לטעינת שנות עבריות לרשימה
 function loadHebrewYears() {
-    const startYear = 5770; // תש"ע
-    const endYear = 6000;   // ת"ת
-    const datalist = document.getElementById('hebrew-years');
+    const loadingData = showLoadingModal('טוען שנים עבריות', 'משיכת נתונים מ-Hebcal...');
     
-    for (let y = startYear; y <= endYear; y++) {
-        const option = document.createElement('option');
-        const hebrewYear = convertToHebrewLetters(y);
-        option.value = hebrewYear;
-        option.setAttribute('data-numeric', y);
-        datalist.appendChild(option);
+    setTimeout(() => {
+        try {
+            const startYear = 5700; // תש"ע
+            const endYear = 5900;   // ת"ת
+            
+            // יצירת מערך השנים
+            allHebrewYears = [];
+            for (let y = startYear; y <= endYear; y++) {
+                const hebrewYear = convertToHebrewLetters(y);
+                allHebrewYears.push({
+                    hebrew: hebrewYear,
+                    numeric: y
+                });
+            }
+            
+            // הוספת event listeners לחיפוש
+            setupYearSearch();
+            
+        } catch (error) {
+            console.error('שגיאה בטעינת השנים העבריות:', error);
+            alert('אירעה שגיאה בטעינת השנים העבריות');
+        } finally {
+            hideLoadingModal(loadingData);
+        }
+    }, 800); // השהיה של 0.8 שניות
+}
+
+// פונקציה להגדרת חיפוש השנים
+function setupYearSearch() {
+    const input = document.getElementById('hebrew-year');
+    const dropdown = document.getElementById('hebrew-years-dropdown');
+    
+    input.addEventListener('input', function() {
+        const searchValue = this.value.trim();
+        console.log('Input changed:', searchValue); // לבדיקה
+        filterAndShowYears(searchValue);
+    });
+    
+    input.addEventListener('focus', function() {
+        const searchValue = this.value.trim();
+        console.log('Input focused:', searchValue); // לבדיקה
+        filterAndShowYears(searchValue);
+    });
+    
+    input.addEventListener('keyup', function() {
+        const searchValue = this.value.trim();
+        console.log('Key up:', searchValue); // לבדיקה
+        filterAndShowYears(searchValue);
+    });
+    
+    // כשמשתמש יוצא מהשדה, עדכן את השנה ואת זמני השקיעה
+    input.addEventListener('blur', function() {
+        const enteredYear = this.value.trim();
+        console.log('User left field with value:', enteredYear); // לבדיקה
+        
+        // בדוק אם השנה שהוקלדה קיימת במערך
+        // הסר גרשיים מהשנה שהוקלדה לצורך חיפוש
+        const enteredYearWithoutGeresh = enteredYear.replace(/["׳״‟„"]/g, '');
+        const yearData = allHebrewYears.find(y => {
+            const yearWithoutGeresh = y.hebrew.replace(/["׳״‟„"]/g, '');
+            return yearWithoutGeresh === enteredYearWithoutGeresh;
+        });
+        
+        if (yearData) {
+            console.log('Found matching year:', yearData); // לבדיקה
+            // עדכן את המשתנים הגלובליים
+            numericYear = yearData.numeric;
+            year = enteredYear;
+            
+            // עדכן זמן שקיעה לשנה החדשה
+            const holiday = document.getElementById('holiday').value;
+            if (holiday) {
+                getHolidaySunset(holiday, true).then((holidaySunset) => {
+                    console.log("Updated sunset for new year:", holidaySunset);
+                    setSunsetTime(holidaySunset);
+                });
+            }
+        } else {
+            console.log('Year not found in list:', enteredYear); // לבדיקה
+        }
+        
+        // סגור את הרשימה
+        dropdown.style.display = 'none';
+    });
+    
+    // סגירת הרשימה כשלוחצים מחוץ לה
+    document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+}
+
+// פונקציה לסינון והצגת השנים
+function filterAndShowYears(searchValue) {
+    const dropdown = document.getElementById('hebrew-years-dropdown');
+    dropdown.innerHTML = '';
+    
+    console.log('Filtering years for:', searchValue); // לבדיקה
+    console.log('Search value char codes:', searchValue.split('').map(char => `${char}(${char.charCodeAt(0)})`).join(' ')); // לבדיקה
+    
+    if (!searchValue) {
+        // אם אין טקסט חיפוש, הצג את כל השנים
+        const recentYears = allHebrewYears.slice(-50); // הצג 50 השנים האחרונות
+        recentYears.forEach(year => {
+            addYearToDropdown(year, dropdown);
+        });
+    } else {
+        // סינון לפי הטקסט שהוקלד
+        let filteredYears;
+        
+        // תמיד חפש שנים שמתחילות עם הטקסט
+        filteredYears = allHebrewYears.filter(year => {
+            // הסר גרשיים מהשנה ומהחיפוש לצורך השוואה
+            const yearWithoutGeresh = year.hebrew.replace('"', '');
+            const searchWithoutGeresh = searchValue.replace(/["׳״‟„"]$/, '');
+            
+            console.log(`Comparing: ${yearWithoutGeresh} starts with ${searchWithoutGeresh}?`, yearWithoutGeresh.startsWith(searchWithoutGeresh)); // לבדיקה
+            
+            // חפש התאמה לפי הטקסט בלי גרשיים
+            return yearWithoutGeresh.startsWith(searchWithoutGeresh);
+        });
+        
+        console.log('Filtered years count:', filteredYears.length); // לבדיקה
+        
+        // הגבל ל-20 תוצאות
+        filteredYears.forEach(year => {
+            addYearToDropdown(year, dropdown);
+        });
     }
+    
+    dropdown.style.display = dropdown.children.length > 0 ? 'block' : 'none';
+    console.log('Dropdown display:', dropdown.style.display); // לבדיקה
+}
+
+// פונקציה להוספת שנה לרשימה הנפתחת
+function addYearToDropdown(year, dropdown) {
+    const item = document.createElement('a');
+    item.className = 'dropdown-item';
+    item.href = '#';
+    item.textContent = year.hebrew;
+    item.setAttribute('data-numeric', year.numeric);
+    
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('hebrew-year').value = year.hebrew;
+        dropdown.style.display = 'none';
+        
+        // עדכן את המשתנים הגלובליים
+        numericYear = year.numeric;
+        globalYear = year.hebrew;
+        
+        // עדכן זמן שקיעה
+        updateSelectedYear();
+    });
+    
+    dropdown.appendChild(item);
+}
+
+// פונקציה לאתחול הדף
+function initializePage() {
+    loadHebrewYears();
+    updateDayOptions();
 }
 
 // פונקציה לעדכון השנה בהתאם לבחירת המשתמש
@@ -64,23 +226,20 @@ function updateSelectedYear() {
     const selectedYear = input.value;
     
     if (selectedYear) {
-        // מצא את השנה המספרית המתאימה
-        const options = document.querySelectorAll('#hebrew-years option');
-        for (let option of options) {
-            if (option.value === selectedYear) {
-                numericYear = parseInt(option.getAttribute('data-numeric'));
-                year = selectedYear;
-                console.log("נבחרה שנה: " + year + " (" + numericYear + ")");
-                
-                // עדכן את זמן השקיעה בהתאם לשנה החדשה
-                const holiday = document.getElementById('holiday').value;
-                if (holiday) {
-                    getPesachSunset(holiday).then((holidaySunset) => {
-                        console.log("holiday sunset for selected year: " + holidaySunset);
-                        setSunsetTime(holidaySunset);
-                    });
-                }
-                break;
+        // מצא את השנה המספרית המתאימה במערך
+        const yearData = allHebrewYears.find(y => y.hebrew === selectedYear);
+        if (yearData) {
+            numericYear = yearData.numeric;
+            year = selectedYear;
+            console.log("נבחרה שנה: " + year + " (" + numericYear + ")");
+            
+            // עדכן את זמן השקיעה בהתאם לשנה החדשה
+            const holiday = document.getElementById('holiday').value;
+            if (holiday) {
+                getHolidaySunset(holiday, true).then((holidaySunset) => {
+                    console.log("holiday sunset for selected year: " + holidaySunset);
+                    setSunsetTime(holidaySunset);
+                });
             }
         }
     }
@@ -98,8 +257,6 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('day-of-week').value = 'sunday';
 	
 	document.getElementById('holiday').addEventListener('change', updateDayOptions);
-    document.getElementById('hebrew-year').addEventListener('change', updateSelectedYear);
-    document.getElementById('hebrew-year').addEventListener('input', updateSelectedYear);
 	
 	  getHebrewYear().then((hebrewYear) => {
 		  
@@ -110,11 +267,12 @@ document.addEventListener("DOMContentLoaded", function () {
       document.getElementById('hebrew-year').value = hebrewYear;
     console.log("השנה העברית הנוכחית היא: " + hebrewYear);
 	
-	// Example usage: get the sunset time for Pesach in the year 2025
-    getPesachSunset(numericYear).then((pesachSunset) => {
-	console.log("pesach: "+pesachSunset);
+	// Example usage: get the sunset time for the default holiday
+    const defaultHoliday = 'rosh_hashana'; // החג שמוגדר כברירת מחדל
+    getHolidaySunset(defaultHoliday, false).then((holidaySunset) => {
+	console.log("holiday sunset: "+holidaySunset);
 	
-	setSunsetTime(pesachSunset);
+	setSunsetTime(holidaySunset);
 		
 	});
 	
@@ -200,7 +358,7 @@ function updateDayOptions() {
         }
     }
 	
-	getPesachSunset(holiday).then((pesachSunset) => {
+	getHolidaySunset(holiday).then((pesachSunset) => {
 	console.log("holiday sunset: "+pesachSunset);
 	
 	setSunsetTime(pesachSunset);
@@ -218,8 +376,13 @@ function addMinutesToTime(time, minutes) {
 
 // פונקציה כללית שמזמינה את יצירת המסמך לכל חג ספציפי
 function generateWordDocument() {
-    const holiday = document.getElementById('holiday').value;
-    const selectedYear = document.getElementById('hebrew-year').value || year;
+    const loadingData = showLoadingModal('יצירת קובץ','מייצר קובץ Word...');
+    
+    // סימולציה של משיכת נתונים מ-Hebcal
+    setTimeout(() => {
+        try {
+            const holiday = document.getElementById('holiday').value;
+            const selectedYear = document.getElementById('hebrew-year').value || year;
     
     switch (holiday) {
         case 'rosh_hashana':
@@ -256,6 +419,13 @@ function generateWordDocument() {
         default:
             console.error('Holiday not supported');
     }
+        } catch (error) {
+            console.error('שגיאה ביצירת המסמך:', error);
+            alert('אירעה שגיאה ביצירת המסמך');
+        } finally {
+            hideLoadingModal(loadingData);
+        }
+    }, 1500); // השהיה של 1.5 שניות לסימולציה
 }
 
 function setSunsetTime(sunsetDateTime) {
@@ -265,7 +435,11 @@ function setSunsetTime(sunsetDateTime) {
 }
 
 // Function to get the Gregorian date of Pesach and sunset time for a given year
-async function getPesachSunset(selectedHoliday) {
+async function getHolidaySunset(selectedHoliday, showLoading = true) {
+    let loadingData = null;
+    if (showLoading) {
+        loadingData = showLoadingModal('טוען זמני שקיעה', 'קבלת נתונים מ-Hebcal...');
+    }
   try {
 	  var holidayName = "";
 	  switch (selectedHoliday) {
@@ -370,6 +544,10 @@ async function getPesachSunset(selectedHoliday) {
   } catch (error) {
     console.error('Error fetching Pesach sunset time:', error);
     return null;
+  } finally {
+    if (loadingData) {
+        hideLoadingModal(loadingData);
+    }
   }
 }
 
@@ -405,6 +583,69 @@ function getHebrewHolidayTitle(holiday) {
         case 'tisha_beav': return "תשעה באב";
         default: return "חג";
     }
+}
+
+// פונקציה להוספת גרשיים לפני האות האחרונה בשנה העברית
+function addGereshToYear(year) {
+    if (!year || year.length < 2) return year;
+    
+    // בדיקה אם כבר יש גרשיים בכל מקום בשנה
+    if (year.includes('"')) {
+        return year; // כבר יש גרשיים
+    }
+    
+    // הוספת גרשיים לפני האות האחרונה
+    return year.slice(0, -1) + '"' + year.slice(-1);
+}
+
+// פונקציות לניהול דיאלוג הטעינה
+function showLoadingModal(title = 'טוען זמני תפילה', message = 'משיכת נתונים מ-Hebcal...') {
+    const loadingModal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    
+    // עדכון הטקסטים
+    document.querySelector('#loadingModal h5').textContent = title;
+    document.querySelector('#loadingModal p').textContent = message;
+    
+    loadingModal.show();
+    
+    // אנימציה של פס ההתקדמות
+    const progressBar = document.querySelector('#loadingModal .progress-bar');
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress > 90) progress = 90;
+        progressBar.style.width = progress + '%';
+    }, 200);
+    
+    return { modal: loadingModal, interval: interval };
+}
+
+function hideLoadingModal(loadingData) {
+    if (loadingData.interval) {
+        clearInterval(loadingData.interval);
+    }
+    
+    // השלמת פס ההתקדמות
+    const progressBar = document.querySelector('#loadingModal .progress-bar');
+    if (progressBar) {
+        progressBar.style.width = '100%';
+    }
+    
+    setTimeout(() => {
+        loadingData.modal.hide();
+        
+        // וודא שהרקע נעלם לגמרי
+        setTimeout(() => {
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.remove();
+            }
+            // איפוס פס ההתקדמות
+            if (progressBar) {
+                progressBar.style.width = '0%';
+            }
+        }, 300);
+    }, 500);
 }
 
 // פונקציה ליצירת תמונה מעוצבת
@@ -555,7 +796,7 @@ function generateImageDocument(customContent = null, customYear = null, customHo
         bsdElement.style.cssText = `
             position: absolute;
             top: 20px;
-            right: 30px;
+            right: 40px;
             color: #2c5530;
             font-size: ${Math.min(contentFontSize - 4, 24)}px;
             font-weight: bold;

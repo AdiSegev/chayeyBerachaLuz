@@ -10,7 +10,7 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
         minchaErevShabbat: addMinutesToTime(sunsetTime, -30),
         shachrit: "7:30",
         mincha: addMinutesToTime(sunsetTime, -20),
-        arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 25)
+        arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 30)
     };
 
     let htmlContent = `

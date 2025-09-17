@@ -12,7 +12,7 @@ function generatePesachContent(selectedYear) {
             shachrit: "8:30",
             shirHashirim: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
         };
     } else if (selectedDay === 'saturday') {
@@ -31,7 +31,7 @@ function generatePesachContent(selectedYear) {
             shachrit: "8:30",
             shirHashirim: addMinutesToTime(sunsetTime, -85),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
         };
     }
@@ -80,7 +80,7 @@ function generatePesachDocument() {
             shachrit: "8:30",
             shirHashirim: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
 			shachritCholHamoed: "7:00"
         };
     } else if (selectedDay === 'saturday') {
@@ -99,7 +99,7 @@ function generatePesachDocument() {
             shachrit: "8:30",
             shirHashirim: addMinutesToTime(sunsetTime, -85),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
         };
     }

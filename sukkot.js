@@ -12,7 +12,7 @@ function generateSukkotContent(selectedYear) {
             shachrit: "8:00",
             kohelet: addMinutesToTime(sunsetTime, -80),
             mincha: addMinutesToTime(sunsetTime, -20),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
         };
     } else if (selectedDay === 'saturday') {
@@ -67,7 +67,7 @@ function generateSukkotDocument() {
             shachrit: "8:00",
             kohelet: addMinutesToTime(sunsetTime, -80),
             mincha: addMinutesToTime(sunsetTime, -20),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
         };
     } else if (selectedDay === 'saturday') {

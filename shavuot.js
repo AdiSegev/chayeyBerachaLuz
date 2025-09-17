@@ -12,7 +12,7 @@ function generateShavuotContent(selectedYear) {
             shachrit: "8:00",
             rut: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'sunday') {
         times = {
@@ -20,7 +20,7 @@ function generateShavuotContent(selectedYear) {
             shachrit: "8:00",
             rut: addMinutesToTime(sunsetTime, -85),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'friday') {
         times = {
@@ -91,7 +91,7 @@ function generateShavuotDocument() {
             shachrit: "8:00",
             rut: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
             
         };
     } else if (selectedDay === 'sunday') {
@@ -100,7 +100,7 @@ function generateShavuotDocument() {
             shachrit: "8:00",
             rut: addMinutesToTime(sunsetTime, -85),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25),
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
         };
     } else if (selectedDay === 'friday') {
         times = {

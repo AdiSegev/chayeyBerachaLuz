@@ -12,7 +12,7 @@ function generateSimchatTorahContent(selectedYear) {
             shachrit: "7:30",
             hakafot: "12:30",
             minchaAfterHakafot: "מנחה לאחר ההקפות",
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
         times = {
@@ -74,7 +74,7 @@ function generateSimchatTorahDocument() {
             shachrit: "7:30",
             hakafot: "12:30",
             minchaAfterHakafot: "מנחה לאחר ההקפות",
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
         times = {

@@ -29,7 +29,7 @@ function generateRoshHashanaContent(selectedYear) {
             arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
         times = {
@@ -41,7 +41,7 @@ function generateRoshHashanaContent(selectedYear) {
             arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     }
 
@@ -134,7 +134,7 @@ function generateRoshHashanaDocument() {
             arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
         times = {
@@ -146,7 +146,7 @@ function generateRoshHashanaDocument() {
             arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 25)
+            arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     }
 

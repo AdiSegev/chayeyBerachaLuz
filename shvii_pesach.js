@@ -12,7 +12,7 @@ function generateShviiPesachContent(selectedYear) {
             shachrit: "8:00",
             shirHashirim: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
-            arvitMotzaiChag: addMinutesToTime(sunsetTime, 25)
+            arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
         times = {

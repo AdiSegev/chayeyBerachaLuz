@@ -174,11 +174,13 @@ function updatePreview() {
 
 // יצירת תמונה סופית עם הנתונים הערוכים
 function generateFinalImageFromEdited() {
-    const selectedYear = document.getElementById('hebrew-year').value;
-    const holiday = document.getElementById('holiday').value;
+    const loadingData = showLoadingModal('יצירת קובץ', 'מעבד ויוצר את התמונה...');
     
-    console.log('Generating final image with edited data:', editedPrayerTimes);
-    
+    setTimeout(() => {
+        try {
+            const selectedYear = document.getElementById('hebrew-year').value;
+            const holiday = document.getElementById('holiday').value;
+      
     // יצירת HTML מעודכן עם הנתונים הערוכים באמצעות השמות המקוריים
     let editedHTML = `
         <div style="text-align: center;">
@@ -186,7 +188,6 @@ function generateFinalImageFromEdited() {
     `;
     
     Object.entries(editedPrayerTimes).forEach(([key, data]) => {
-        console.log('Adding to final image:', data.displayName, data.time);
         if (data.isHeader) {
             // כותרת משנה
             editedHTML += `
@@ -205,9 +206,6 @@ function generateFinalImageFromEdited() {
         }
     });
     
-    
-    console.log('Final HTML for image:', editedHTML);
-    
     // יצירת התמונה עם התוכן הערוך
     generateImageDocument(editedHTML, selectedYear, holiday);
     
@@ -216,6 +214,13 @@ function generateFinalImageFromEdited() {
     if (modal) {
         modal.hide();
     }
+        } catch (error) {
+            console.error('שגיאה ביצירת התמונה:', error);
+            alert('אירעה שגיאה ביצירת התמונה');
+        } finally {
+            hideLoadingModal(loadingData);
+        }
+    }, 1000); // השהיה של שנייה
 }
 
 // יצירת HTML מעודכן
