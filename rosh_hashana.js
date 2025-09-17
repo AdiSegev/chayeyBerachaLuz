@@ -15,7 +15,6 @@ function generateRoshHashanaContent(selectedYear) {
             shachrit: "7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
             minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -35),
             shirHashirim: sunsetTime,
             lechuNeranena: addMinutesToTime(sunsetTime, 25)
@@ -26,7 +25,6 @@ function generateRoshHashanaContent(selectedYear) {
             shachrit: "7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
             minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
             arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
@@ -78,15 +76,13 @@ function generateRoshHashanaContent(selectedYear) {
 
     // זמני היום השני
     if (selectedDay === 'thursday') {
-        htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni}</td></tr>
+        htmlContent += `           
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לכו נרננה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechuNeranena}</td></tr>
         `;
     } else {
         htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>תהילים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.tehillimYomTovSheni}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
@@ -120,7 +116,6 @@ function generateRoshHashanaDocument() {
 			shachrit:"7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
             minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -35),
             shirHashirim: sunsetTime,
             lechuNeranena: addMinutesToTime(sunsetTime, 25)
@@ -131,7 +126,6 @@ function generateRoshHashanaDocument() {
 			shachrit:"7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
             minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
-            arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
             arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
@@ -227,9 +221,16 @@ function generateRoshHashanaDocument() {
                         heading: docx.HeadingLevel.HEADING_2,
                         style: "subHeaderStyleUnderline"
                     }),
-                    new docx.Paragraph(""),  // שורה ריקה
-					new docx.Paragraph(""),
-					new docx.Paragraph(""),
+                    ...(selectedDay === 'saturday'
+                        ? [
+                            new docx.Paragraph(""),  // שורה ריקה
+							new docx.Paragraph(""),							
+                        ]:[
+                            new docx.Paragraph(""),  // שורה ריקה
+							new docx.Paragraph(""),
+							new docx.Paragraph(""),
+                        ]),
+                    
                     // זמני היום הראשון
                     ...(selectedDay === 'saturday'
                         ? [
@@ -272,7 +273,7 @@ function generateRoshHashanaDocument() {
                                   style: "normalStyle"
                               }),
                               new docx.Paragraph(""),
-							  new docx.Paragraph(""),
+							  
                           ]
                         : [
                               new docx.Paragraph({
@@ -316,18 +317,24 @@ function generateRoshHashanaDocument() {
                         heading: docx.HeadingLevel.HEADING_2,
                         style: "subHeaderStyleUnderline"
                     }),
-                    new docx.Paragraph(""),  // שורה ריקה
-					new docx.Paragraph(""),
-					new docx.Paragraph(""),
+                    ...(selectedDay === 'saturday'
+                        ? [
+                            new docx.Paragraph(""),  // שורה ריקה
+							new docx.Paragraph(""),							
+                        ]:[
+                            new docx.Paragraph(""),  // שורה ריקה
+							new docx.Paragraph(""),
+							new docx.Paragraph(""),
+                        ]),
                     // זמני היום השני
                     ...(selectedDay === 'thursday'
                         ? [
-                              new docx.Paragraph({
-                                  text: `ערבית : ${times.arvitYomTovSheni}`,
-                                  alignment: docx.AlignmentType.CENTER,
-                                  bidirectional: true,
-                                  style: "normalStyle"
-                              }),
+                            new docx.Paragraph({
+                                text: `שחרית : ${times.shachrit}`,
+                                alignment: docx.AlignmentType.CENTER,
+                                bidirectional: true,
+                                style: "normalStyle"
+                            }),
                               new docx.Paragraph(""),
 							  new docx.Paragraph(""),
                               new docx.Paragraph({
@@ -401,14 +408,6 @@ function generateRoshHashanaDocument() {
                           ]
                         : [
                               new docx.Paragraph({
-                                  text: `ערבית : ${times.arvitYomTovSheni}`,
-                                  alignment: docx.AlignmentType.CENTER,
-                                  bidirectional: true,
-                                  style: "normalStyle"
-                              }),
-                              new docx.Paragraph(""),
-							  new docx.Paragraph(""),
-							  new docx.Paragraph({
                                   text: `שחרית : ${times.shachrit}`,
 								  alignment: docx.AlignmentType.CENTER,
                                   bidirectional: true,
