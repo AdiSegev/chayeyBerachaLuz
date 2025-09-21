@@ -728,9 +728,7 @@ function generateImageDocument(customContent = null, customYear = null, customHo
     backgroundImg.onload = function() {
         // ציור תמונת הרקע על הקנבס
         ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-        
-        console.log('Using holiday content for image:', holidayContent);
-        
+                
         // חישוב גודל פונט דינמי לפי כמות הטקסט (הגדלה פי 1.5)
         const textLength = holidayContent.replace(/<[^>]*>/g, '').length;
         let contentFontSize;

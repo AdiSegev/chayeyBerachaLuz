@@ -31,7 +31,7 @@ function extractPrayerTimesFromHTML(htmlContent) {
                     let displayName = cells[0].textContent.replace(/[:\*]/g, '').trim();
                     const time = cells[1].textContent.trim();
                     
-                    if (displayName && time && time.match(/\d{1,2}:\d{2}/) && !time.includes('לאחר')) {
+                    if (displayName && time && (time.match(/\d{1,2}:\d{2}/) || time === 'לאחר ההקפות')) {
                         // שימוש במספר רצף כמפתח ייחודי
                         const uniqueKey = `prayer_${counter}`;
                         counter++;
@@ -196,10 +196,11 @@ function generateFinalImageFromEdited() {
             <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
             `;
         } else {
-            // שורת זמן רגילה
+            // שורת זמן רגילה - השתמש בשם התפילה בלבד, לא בזמן
+            const prayerName = data.displayName;
             editedHTML += `
                 <tr>
-                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${data.originalHTML}</td>
+                    <td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>${prayerName}:</strong></td>
                     <td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${data.time}</td>
                 </tr>
             `;
@@ -245,6 +246,66 @@ function createEditedHTML() {
     `;
     
     return htmlContent;
+}
+
+// יצירת קובץ Word סופי עם הנתונים הערוכים
+function generateWordFromEdited() {
+    const loadingData = showLoadingModal('יצירת קובץ Word', 'מעבד ויוצר את המסמך...');
+    
+    setTimeout(() => {
+        try {
+            const selectedYear = document.getElementById('hebrew-year').value;
+            const holiday = document.getElementById('holiday').value;
+            
+            // קריאה לפונקציה המתאימה לפי החג
+            switch(holiday) {
+                case 'pesach':
+                    generatePesachWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'rosh_hashana':
+                    generateRoshHashanaWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'yom_kippur':
+                    generateYomKippurWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'sukkot':
+                    generateSukkotWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'shavuot':
+                    generateShavuotWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'tisha_beav':
+                    generateTishaBeAvWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'shvii_pesach':
+                    generateShviiPesachWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'simchat_torah':
+                    generateSimchatTorahWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'shabat_chol_hamoed_sukkot':
+                    generateShabbatHolHamoedSukkotWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                case 'shabat_chol_hamoed_pesach':
+                    generateShabbatHolHamoedPesachWordFromEdited(editedPrayerTimes, selectedYear);
+                    break;
+                default:
+                    alert('עדיין לא נתמך עבור חג זה');
+                    return;
+            }
+            
+            // סגירת המודאל
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editModal'));
+            if (modal) {
+                modal.hide();
+            }
+        } catch (error) {
+            console.error('שגיאה ביצירת קובץ Word:', error);
+            alert('אירעה שגיאה ביצירת קובץ Word');
+        } finally {
+            hideLoadingModal(loadingData);
+        }
+    }, 1000);
 }
 
 // פונקציה עזר ליצירת תמונה עם תוכן מסוים

@@ -10,6 +10,7 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
         minchaErevShabbat: addMinutesToTime(sunsetTime, -30),
         shachrit: "7:30",
         mincha: addMinutesToTime(sunsetTime, -20),
+        matamane: addMinutesToTime(sunsetTime, 5),
         arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 30)
     };
 
@@ -20,6 +21,7 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevShabbat}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מת'אמנה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.matamane}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiShabbat}</td></tr>
             </table>
             <br><br>
@@ -166,5 +168,158 @@ function generateShabbatHolHamoedPesachDocument() {
 
     docx.Packer.toBlob(doc).then(blob => {
         saveAs(blob, "prayer_schedule_shabbat_hol_hamoed_pesach.docx");
+    });
+}
+
+// יצירת קובץ Word מהנתונים הערוכים
+function generateShabbatHolHamoedPesachWordFromEdited(editedData, selectedYear) {
+    // חילוץ הזמנים מהנתונים הערוכים
+    const times = {};
+    
+    // המרת הנתונים הערוכים למערך לזיהוי קל יותר
+    const prayerArray = Object.values(editedData).filter(item => !item.isHeader);
+    
+    // מיפוי לפי שמות התפילות
+    prayerArray.forEach(prayer => {
+        if (prayer.displayName === 'שיר השירים') {
+            times.shirHashirim = prayer.time;
+        } else if (prayer.displayName === 'מנחה ערב שבת') {
+            times.minchaErevShabbat = prayer.time;
+        } else if (prayer.displayName === 'שחרית') {
+            times.shachrit = prayer.time;
+        } else if (prayer.displayName === 'מנחה') {
+            times.mincha = prayer.time;
+        } else if (prayer.displayName === 'מת\'אמנה') {
+            times.matamane = prayer.time;
+        } else if (prayer.displayName === 'ערבית מוצאי שבת') {
+            times.arvitMotzaiShabbat = prayer.time;
+        }
+    });
+
+    const doc = new docx.Document({
+        styles: {
+            paragraphStyles: [
+                {
+                    id: "headerStyle",
+                    name: "Header Style",
+                    basedOn: "Normal",
+                    quickFormat: true,
+                    run: {
+                        font: "Narkisim",
+                        size: 58,
+                        bold: true,
+                        underline: {},
+                        color: "000000"
+                    },
+                },
+                {
+                    id: "subHeaderStyle",
+                    name: "Sub Header Style",
+                    basedOn: "Normal",
+                    quickFormat: true,
+                    run: {
+                        font: "Narkisim",
+                        size: 48,
+                        color: "000000"
+                    },
+                },
+                {
+                    id: "normalStyle",
+                    name: "Normal Style",
+                    basedOn: "Normal",
+                    quickFormat: true,
+                    run: {
+                        font: "Narkisim",
+                        size: 44,
+                        color: "000000"
+                    },
+                }
+            ]
+        },
+        sections: [
+            {
+                children: [
+                    new docx.Paragraph({
+                        text: `שבת חול המועד פסח - ${selectedYear}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        heading: docx.HeadingLevel.HEADING_1,
+                        style: "headerStyle",
+                        bidirectional: true
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שיר השירים: ${times.shirHashirim}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `מנחה ערב שבת: ${times.minchaErevShabbat}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: "יום השבת",
+                        alignment: docx.AlignmentType.CENTER,
+                        heading: docx.HeadingLevel.HEADING_1,
+                        style: "subHeaderStyle",
+                        bidirectional: true
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שחרית: ${times.shachrit}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `מנחה: ${times.mincha}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `מת'אמנה: ${times.matamane}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `ערבית מוצאי שבת: ${times.arvitMotzaiShabbat}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: "תוסיפו שנים רבות ומועדים טובים",
+                        alignment: docx.AlignmentType.CENTER,
+                        heading: docx.HeadingLevel.HEADING_1,
+                        style: "subHeaderStyle",
+                        bidirectional: true
+                    })
+                ]
+            }
+        ]
+    });
+
+    docx.Packer.toBlob(doc).then(blob => {
+        saveAs(blob, "prayer_schedule_shabbat_hol_hamoed_pesach_edited.docx");
     });
 }
