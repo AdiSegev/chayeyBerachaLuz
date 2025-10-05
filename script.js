@@ -287,7 +287,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function getHebrewYear() {
   try {
-    const response = await fetch('https://www.hebcal.com/converter?cfg=json&gy=2024&gm=10&gd=20&g2h=1');
+    // קבלת התאריך הנוכחי
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // חודשים מתחילים מ-0
+    const day = today.getDate();
+    
+    const response = await fetch(`https://www.hebcal.com/converter?cfg=json&gy=${year}&gm=${month}&gd=${day}&g2h=1`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -789,16 +795,15 @@ function generateImageDocument(customContent = null, customYear = null, customHo
         
         titleContainer.appendChild(mainTitle);
         titleContainer.appendChild(subTitle);
-        // הוספת בס"ד בפינה העליונה הימנית
+        // הוספת בס"ד במרכז השורה העליונה
         const bsdElement = document.createElement('div');
         bsdElement.style.cssText = `
-            position: absolute;
-            top: 20px;
-            right: 40px;
+            text-align: center;
             color: #2c5530;
             font-size: ${Math.min(contentFontSize - 4, 24)}px;
             font-weight: bold;
             font-family: 'Pfennig', 'Arial', sans-serif;
+            margin-bottom: 20px;
         `;
         bsdElement.textContent = 'בס"ד';
         container.appendChild(bsdElement);

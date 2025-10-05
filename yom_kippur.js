@@ -9,9 +9,9 @@ function calculateYomKippurTimes(selectedDay, sunsetTime) {
             kabalatShabbat: addMinutesToTime(sunsetTime, -25),
             lechaEli: addMinutesToTime(sunsetTime, -10),
             shachrit: "7:30",
-            mincha: addMinutesToTime(sunsetTime, -135),
-            neilah: addMinutesToTime(sunsetTime, -40),
-            arvit: addMinutesToTime(sunsetTime, 20),
+            mincha: addMinutesToTime(sunsetTime, -150),
+            neilah: addMinutesToTime(sunsetTime, -50),
+            arvit: addMinutesToTime(sunsetTime, 13),
             endTzom: addMinutesToTime(sunsetTime, 33)
         };
     } else {
@@ -19,9 +19,9 @@ function calculateYomKippurTimes(selectedDay, sunsetTime) {
             minchaErevKipur: "13:00",
             lechaEli: addMinutesToTime(sunsetTime, -10),
             shachrit: "7:30",
-            mincha: addMinutesToTime(sunsetTime, -135),
-            neilah: addMinutesToTime(sunsetTime, -40),
-            arvit: addMinutesToTime(sunsetTime, 20),
+            mincha: addMinutesToTime(sunsetTime, -150),
+            neilah: addMinutesToTime(sunsetTime, -50),
+            arvit: addMinutesToTime(sunsetTime, 13),
             endTzom: addMinutesToTime(sunsetTime, 33)
         };
     }
