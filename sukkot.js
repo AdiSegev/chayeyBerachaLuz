@@ -7,7 +7,7 @@ function calculateSukkotTimes(selectedDay, sunsetTime) {
         times = {
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
             shachrit: "8:00",
-            kohelet: addMinutesToTime(sunsetTime, -80),
+            kohelet: addMinutesToTime(sunsetTime, -110),
             mincha: addMinutesToTime(sunsetTime, -20),
             arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
@@ -17,7 +17,7 @@ function calculateSukkotTimes(selectedDay, sunsetTime) {
             shirHashirim: addMinutesToTime(sunsetTime, -40),
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
             shachrit: "8:00",
-            kohelet: addMinutesToTime(sunsetTime, -150),
+            kohelet: addMinutesToTime(sunsetTime, -180),
             mincha: addMinutesToTime(sunsetTime, -90),
             arvitMotzaiChag: addMinutesToTime(sunsetTime, 30),
             shachritCholHamoed: "7:00"
