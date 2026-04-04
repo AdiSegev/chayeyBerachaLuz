@@ -46,7 +46,7 @@ function generateSimchatTorahContent(selectedYear) {
     htmlContent += `
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>הקפות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.hakafot}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>הקפות שמחת תורה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.hakafot}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">לאחר ההקפות</td></tr>
     `;
 

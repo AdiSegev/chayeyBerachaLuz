@@ -52,7 +52,7 @@ function generateYomKippurContent(selectedYear) {
     }
 
     htmlContent += `
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לכה אלי:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechaEli}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לך אלי:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechaEli}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>נעילה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.neilah}</td></tr>

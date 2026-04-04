@@ -81,10 +81,19 @@ function generateRoshHashanaContent(selectedYear) {
 
     // זמני היום השני
     if (selectedDay === 'thursday') {
-        htmlContent += `           
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>לכו נרננה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.lechuNeranena}</td></tr>
+        `;
+    } else if (selectedDay === 'saturday') {
+        htmlContent += `
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>תהילים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.tehillimYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaYomTovSheni}</td></tr>
+            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitYomTovSheni2}</td></tr>
         `;
     } else {
         htmlContent += `
