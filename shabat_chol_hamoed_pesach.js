@@ -6,10 +6,11 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
     const sunsetTime = document.getElementById('sunset-time').value;
 
     let times = {
-        shirHashirim: addMinutesToTime(sunsetTime, -55),
-        minchaErevShabbat: addMinutesToTime(sunsetTime, -30),
-        shachrit: "7:30",
-        mincha: addMinutesToTime(sunsetTime, -20),
+        shirHashirimErevShabbat: addMinutesToTime(sunsetTime, -45),
+        minchaErevChag: addMinutesToTime(sunsetTime, -25),
+        shachrit: "8:00",
+        shirHashirim: addMinutesToTime(sunsetTime, -150),
+        mincha: addMinutesToTime(sunsetTime, -90),
         matamane: addMinutesToTime(sunsetTime, 5),
         arvitMotzaiShabbat: addMinutesToTime(sunsetTime, 30)
     };
@@ -17,9 +18,10 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
     let htmlContent = `
         <div style="text-align: center;">
             <table style="margin: 0 auto; border-collapse: collapse; width: 60%; max-width: 400px;">
-                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
-                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevShabbat}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirimErevShabbat}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+                <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מת'אמנה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.matamane}</td></tr>
                 <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי שבת:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiShabbat}</td></tr>
