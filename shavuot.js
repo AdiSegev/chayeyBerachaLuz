@@ -23,9 +23,9 @@ function calculateShavuotTimes(selectedDay, sunsetTime) {
         times = {
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
             shachrit: "8:00",
-            rut: addMinutesToTime(sunsetTime, -120),
-            shirHashirim: addMinutesToTime(sunsetTime, -60),
-            mincha: addMinutesToTime(sunsetTime, -35)
+            rut: addMinutesToTime(sunsetTime, -125),
+            mincha: addMinutesToTime(sunsetTime, -50),
+            shirHashirim: addMinutesToTime(sunsetTime, -25)
         };
     }
     return times;
@@ -58,15 +58,15 @@ function generateShavuotContent(selectedYear) {
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>רות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.rut}</td></tr>
     `;
 
+    htmlContent += `
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+    `;
+
     if (selectedDay === 'friday') {
         htmlContent += `
             <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
         `;
     }
-
-    htmlContent += `
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
-    `;
 
     if (selectedDay !== 'friday') {
         htmlContent += `
@@ -184,22 +184,21 @@ function generateShavuotDocument() {
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: selectedDay != 'friday' ? `מנחה: ${times.mincha}` :  `שיר השירים: ${times.shirHashirim}`,
+                        text: `מנחה: ${times.mincha}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
-				
-					new docx.Paragraph({
-                        text: selectedDay != 'friday' ? `ערבית מוצאי חג: ${times.arvitMotzaiChag}` :  `מנחה: ${times.mincha}`,
+
+                    new docx.Paragraph({
+                        text: selectedDay != 'friday' ? `ערבית מוצאי חג: ${times.arvitMotzaiChag}` : `שיר השירים: ${times.shirHashirim}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
                     }),
-					
-                    new docx.Paragraph(""),
+
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
 
@@ -252,8 +251,8 @@ function generateShavuotWordFromEdited(editedData, selectedYear) {
                 times.minchaErevChag = prayerArray[0].time;
                 times.shachrit = prayerArray[1].time;
                 times.rut = prayerArray[2].time;
-                times.shirHashirim = prayerArray[3].time;
-                times.mincha = prayerArray[4].time;
+                times.mincha = prayerArray[3].time;
+                times.shirHashirim = prayerArray[4].time;
             } else {
                 // יום רגיל - שני/רביעי, יש ערבית מוצאי חג
                 selectedDay = 'other';
@@ -357,21 +356,21 @@ function generateShavuotWordFromEdited(editedData, selectedYear) {
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: selectedDay != 'friday' ? `מנחה: ${times.mincha}` :  `שיר השירים: ${times.shirHashirim}`,
+                        text: `מנחה: ${times.mincha}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
-				
-					new docx.Paragraph({
-                        text: selectedDay != 'friday' ? `ערבית מוצאי חג: ${times.arvitMotzaiChag}` :  `מנחה: ${times.mincha}`,
+
+                    new docx.Paragraph({
+                        text: selectedDay != 'friday' ? `ערבית מוצאי חג: ${times.arvitMotzaiChag}` : `שיר השירים: ${times.shirHashirim}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
                     }),
-                    
+
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
