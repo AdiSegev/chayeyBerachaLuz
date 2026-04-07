@@ -7,7 +7,6 @@ function calculateShviiPesachTimes(selectedDay, sunsetTime) {
         times = {
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
             shachrit: "8:00",
-            shirHashirim: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
             arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
         };
@@ -52,7 +51,7 @@ function generateShviiPesachContent(selectedYear) {
     htmlContent += `
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+        ${(selectedDay === 'friday' || selectedDay === 'saturday') ? `<tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>` : ''}
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>${selectedDay === 'friday' ? 'מנחה ערב שבת' : 'מנחה'}:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
     `;
 
@@ -169,14 +168,16 @@ function generateShviiPesachDocument() {
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
-                    new docx.Paragraph({
-                        text: `שיר השירים: ${times.shirHashirim}`,
-                        alignment: docx.AlignmentType.CENTER,
-                        bidirectional: true,
-                        style: "normalStyle"
-                    }),
-                    new docx.Paragraph(""),
-                    new docx.Paragraph(""),
+                    ...(selectedDay === 'friday' || selectedDay === 'saturday' ? [
+                        new docx.Paragraph({
+                            text: `שיר השירים: ${times.shirHashirim}`,
+                            alignment: docx.AlignmentType.CENTER,
+                            bidirectional: true,
+                            style: "normalStyle"
+                        }),
+                        new docx.Paragraph(""),
+                        new docx.Paragraph(""),
+                    ] : []),
                     new docx.Paragraph({
                         text: selectedDay != 'friday' ? `מנחה: ${times.mincha}` :  `מנחה ערב שבת: ${times.mincha}`,
                         alignment: docx.AlignmentType.CENTER,
