@@ -406,7 +406,7 @@ function generateYomKippurWordFromEdited(editedData, selectedYear) {
                         ]),
 
                     new docx.Paragraph({
-                        text: `לכה אלי: ${times.lechaEli}`,
+                        text: `לך אלי: ${times.lechaEli}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"

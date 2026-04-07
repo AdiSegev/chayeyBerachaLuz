@@ -38,6 +38,7 @@ function generateShabbatHolHamoedPesachContent(selectedYear) {
 
 function generateShabbatHolHamoedPesachDocument() {
     const sunsetTime = document.getElementById('sunset-time').value;
+    const selectedYear = document.getElementById('hebrew-year').value;
 
     const times = {
         shirHashirimErevShabat: addMinutesToTime(sunsetTime, -45),
@@ -99,7 +100,7 @@ function generateShabbatHolHamoedPesachDocument() {
                     }),
                     new docx.Paragraph(""),  // שורה ריקה
                     new docx.Paragraph({
-                        text: "זמני תפילה שבת חול המועד פסח "+year,
+                        text: "זמני תפילה שבת חול המועד פסח "+selectedYear,
                         alignment: docx.AlignmentType.CENTER,
                         heading: docx.HeadingLevel.HEADING_1,
                         style: "headerStyle"
@@ -177,26 +178,18 @@ function generateShabbatHolHamoedPesachDocument() {
 function generateShabbatHolHamoedPesachWordFromEdited(editedData, selectedYear) {
     // חילוץ הזמנים מהנתונים הערוכים
     const times = {};
-    
+
     // המרת הנתונים הערוכים למערך לזיהוי קל יותר
     const prayerArray = Object.values(editedData).filter(item => !item.isHeader);
-    
-    // מיפוי לפי שמות התפילות
-    prayerArray.forEach(prayer => {
-        if (prayer.displayName === 'שיר השירים') {
-            times.shirHashirim = prayer.time;
-        } else if (prayer.displayName === 'מנחה ערב שבת') {
-            times.minchaErevShabbat = prayer.time;
-        } else if (prayer.displayName === 'שחרית') {
-            times.shachrit = prayer.time;
-        } else if (prayer.displayName === 'מנחה') {
-            times.mincha = prayer.time;
-        } else if (prayer.displayName === 'מת\'אמנה') {
-            times.matamane = prayer.time;
-        } else if (prayer.displayName === 'ערבית מוצאי שבת') {
-            times.arvitMotzaiShabbat = prayer.time;
-        }
-    });
+
+    // מיפוי לפי אינדקסים (סדר קבוע: שיר השירים, מנחה ערב חג, שחרית, שיר השירים, מנחה, מת'אמנה, ערבית מוצאי שבת)
+    times.shirHashirimErevShabbat = prayerArray[0] ? prayerArray[0].time : '';
+    times.minchaErevChag          = prayerArray[1] ? prayerArray[1].time : '';
+    times.shachrit                 = prayerArray[2] ? prayerArray[2].time : '';
+    times.shirHashirim             = prayerArray[3] ? prayerArray[3].time : '';
+    times.mincha                   = prayerArray[4] ? prayerArray[4].time : '';
+    times.matamane                 = prayerArray[5] ? prayerArray[5].time : '';
+    times.arvitMotzaiShabbat       = prayerArray[6] ? prayerArray[6].time : '';
 
     const doc = new docx.Document({
         styles: {
@@ -251,7 +244,7 @@ function generateShabbatHolHamoedPesachWordFromEdited(editedData, selectedYear) 
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: `שיר השירים: ${times.shirHashirim}`,
+                        text: `שיר השירים: ${times.shirHashirimErevShabbat}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
@@ -259,25 +252,23 @@ function generateShabbatHolHamoedPesachWordFromEdited(editedData, selectedYear) 
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: `מנחה ערב שבת: ${times.minchaErevShabbat}`,
+                        text: `מנחה ערב חג: ${times.minchaErevChag}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
-                    }),
-                    new docx.Paragraph(""),
-                    new docx.Paragraph(""),
-                    new docx.Paragraph(""),
-                    new docx.Paragraph({
-                        text: "יום השבת",
-                        alignment: docx.AlignmentType.CENTER,
-                        heading: docx.HeadingLevel.HEADING_1,
-                        style: "subHeaderStyle",
-                        bidirectional: true
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
                         text: `שחרית: ${times.shachrit}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שיר השירים: ${times.shirHashirim}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
