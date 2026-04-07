@@ -535,6 +535,16 @@ async function getHolidaySunset(selectedHoliday, showLoading = true) {
     }
 	console.log("holidayDate: "+holidayDate);
 
+	// עדכון יום השבוע אוטומטית לפי התאריך שהתקבל מ-Hebcal
+	const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+	const autoDay = dayNames[new Date(holidayDate + 'T12:00:00').getDay()];
+	const daySelectEl = document.getElementById('day-of-week');
+	if (daySelectEl) {
+		const matchingOption = Array.from(daySelectEl.options).find(o => o.value === autoDay && !o.disabled);
+		if (matchingOption) {
+			daySelectEl.value = autoDay;
+		}
+	}
 
 	    const options = {
             date: holidayDate,
