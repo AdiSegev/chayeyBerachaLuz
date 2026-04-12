@@ -55,3 +55,61 @@ form {
     100% { background-position: 0 0; }
 }
 
+/* ── Shabbat Schedule Tab ── */
+.container {
+    max-width: 900px;
+}
+
+#shabbat-schedule-output {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    direction: rtl;
+    text-align: right;
+}
+
+.schedule-title {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    color: #1a3a1a;
+}
+
+.schedule-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+    font-size: 0.92rem;
+}
+
+.schedule-table th,
+.schedule-table td {
+    border: 1px solid #aaa;
+    padding: 6px 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.schedule-table thead th {
+    background-color: #d9d9d9;
+    font-weight: bold;
+}
+
+.schedule-table tbody tr:nth-child(odd) {
+    background-color: #fff2cc;
+}
+
+.schedule-table tbody tr:nth-child(even) {
+    background-color: #c5e0b3;
+}
+
+.schedule-footer {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #333;
+    padding-right: 4px;
+}
+
+.schedule-footer p {
+    margin: 2px 0;
+}
+

@@ -11,11 +11,24 @@
 </head>
 <body dir="rtl" class="container" onload="initializePage()">
 
-    <header class="text-center mt-4 mb-5">
-        <h1 class="display-4 text-primary">יצירת לוח זמנים לחגים</h1>
-        <p class="lead text-secondary">אנא הזן את היום בו חל החג ואת זמן השקיעה על מנת לייצר את לוח הזמנים</p>
+    <header class="text-center mt-4 mb-4">
+        <h1 class="display-5 text-primary">חיי ברכה - לוח זמנים</h1>
     </header>
 
+    <!-- Bootstrap Tabs -->
+    <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="holidays-tab" data-bs-toggle="tab" data-bs-target="#holidays-panel" type="button" role="tab">זמני חגים</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="shabbat-tab" data-bs-toggle="tab" data-bs-target="#shabbat-panel" type="button" role="tab">זמני שבת עונתיים</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+    <!-- TAB 1: חגים -->
+    <div class="tab-pane fade show active" id="holidays-panel" role="tabpanel">
     <div class="card shadow-lg">
         <div class="card-body">
             <form id="prayer-times-form" class="mt-3">
@@ -74,6 +87,37 @@
             </form>
         </div>
     </div>
+    </div> <!-- /holidays-panel -->
+
+    <!-- TAB 2: זמני שבת עונתיים -->
+    <div class="tab-pane fade" id="shabbat-panel" role="tabpanel">
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <div class="mb-4">
+                <label for="shabbat-season" class="form-label fw-bold">בחר עונה:</label>
+                <select id="shabbat-season" class="form-select">
+                    <option value="winter">חורף (סוכות עד פסח)</option>
+                    <option value="summer">קיץ (פסח עד סוכות)</option>
+                </select>
+            </div>
+            <p class="text-muted small">השנה העברית נלקחת מהשדה הראשי למעלה. יש לבחור שנה תחילה.</p>
+            <div class="row mb-3">
+                <div class="col">
+                    <button type="button" class="btn btn-primary w-100 fw-bold" onclick="calculateShabbatSchedule()">חשב לוח שבתות</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-success w-100 fw-bold" onclick="generateShabbatScheduleDocument()">ייצא ל-Word</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-info w-100 fw-bold text-white" onclick="generateShabbatScheduleImage()">ייצא תמונה</button>
+                </div>
+            </div>
+            <div id="shabbat-schedule-container" class="mt-4"></div>
+        </div>
+    </div>
+    </div> <!-- /shabbat-panel -->
+
+    </div> <!-- /tab-content -->
 
     <!-- Modal עריכת זמני תפילה -->
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -168,5 +212,7 @@
 	<script src="shabat_chol_hamoed_pesach.js"></script>
 	<script src="shavuot.js"></script>
     <script src="tisha_beav.js"></script>
+    <script src="zmanim_5786.js"></script>
+    <script src="shabbat_schedule.js"></script>
     </body>
 </html>
