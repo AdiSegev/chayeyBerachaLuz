@@ -113,3 +113,17 @@ form {
     margin: 2px 0;
 }
 
+#shabbat-settings h6 {
+    color: #495057;
+    font-size: 0.85rem;
+}
+
+#shabbat-settings label {
+    color: #6c757d;
+}
+
+#shabbat-settings .form-control-sm,
+#shabbat-settings .form-select-sm {
+    font-size: 0.82rem;
+}
+

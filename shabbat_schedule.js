@@ -130,6 +130,45 @@ function getFridayDateStr(satDateStr) {
     return d.toISOString().slice(0, 10);
 }
 
+// ----------------------------------------------------------------
+// הגדרות חישוב
+// ----------------------------------------------------------------
+function getSettings() {
+    const v = (id, def) => {
+        const el = document.getElementById(id);
+        return el ? el.value : def;
+    };
+    const n = (id, def) => parseInt(v(id, def)) || def;
+    return {
+        minchaOffset:         n('setting-mincha-offset', 20),
+        minchaRoundSummer:    v('setting-mincha-round-summer', 'floor'),
+        minchaRoundWinter:    v('setting-mincha-round-winter', 'nearest'),
+        arvitOffsetSummer:    n('setting-arvit-offset-summer', 35),
+        arvitOffsetWinter:    n('setting-arvit-offset-winter', 40),
+        arvitCap:             v('setting-arvit-cap', '20:15'),
+        arvitMinGap:          n('setting-arvit-min-gap', 30),
+        minchaShabbatSummer:  v('setting-mincha-shabbat-summer', '17:00'),
+        minchaShabbatWinter:  v('setting-mincha-shabbat-winter', '12:45'),
+        shirOffset:           n('setting-shir-offset', 25),
+        tamhanaOffset:        n('setting-tamhana-offset', 25),
+    };
+}
+
+function resetShabbatSettings() {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+    set('setting-mincha-offset', 20);
+    set('setting-mincha-round-summer', 'floor');
+    set('setting-mincha-round-winter', 'nearest');
+    set('setting-arvit-offset-summer', 35);
+    set('setting-arvit-offset-winter', 40);
+    set('setting-arvit-cap', '20:15');
+    set('setting-arvit-min-gap', 30);
+    set('setting-mincha-shabbat-summer', '17:00');
+    set('setting-mincha-shabbat-winter', '12:45');
+    set('setting-shir-offset', 25);
+    set('setting-tamhana-offset', 25);
+}
+
 // שליפת זמן שקיעה מהטבלה הסטטית
 function getSunsetFromLookup(dateStr) {
     const t = SUNSET_LOOKUP[dateStr];
@@ -138,31 +177,30 @@ function getSunsetFromLookup(dateStr) {
 }
 
 // חישוב זמני שבת אחת
-function calcOneShabbatTimes(friDateStr, satDateStr, season) {
+function calcOneShabbatTimes(friDateStr, satDateStr, season, settings) {
+    const s = settings || getSettings();
     const friSunset = getSunsetFromLookup(friDateStr);
     const satSunset = getSunsetFromLookup(satDateStr);
 
-    // מנחה ערב שבת = שקיעת יום שישי − 20 דקות רגילות
-    // שעון קיץ (DST): עיגול למטה (floor) | שעון חורף (standard): nearest-5 (Math.round)
-    const minchaRaw = addMinutesToTime(friSunset, -20);
-    const mincha = isInDST(friDateStr) ? roundFloor5(minchaRaw) : roundToNearest5(minchaRaw, 'down');
+    // מנחה ערב שבת
+    const minchaRaw = addMinutesToTime(friSunset, -s.minchaOffset);
+    const minchaRound = isInDST(friDateStr) ? s.minchaRoundSummer : s.minchaRoundWinter;
+    const mincha = minchaRound === 'floor' ? roundFloor5(minchaRaw) : roundToNearest5(minchaRaw, 'down');
 
-    // ערבית מוצאי שבת = שקיעת שבת + 35 דקות רגילות
-    const arvitBase = addMinutesToTime(satSunset, 35);
-
+    // ערבית מוצאי שבת
     let arvit;
     if (isInDST(satDateStr)) {
-        // שעון קיץ (DST): עיגול למטה (floor), מקסימום 20:15 — אלא אם 20:15 פחות מ-30 דקות אחרי שקיעה
+        const arvitBase  = addMinutesToTime(satSunset, s.arvitOffsetSummer);
         const arvitFloor = roundFloor5(arvitBase);
-        const thirtyMin  = addMinutesToTime(satSunset, 30);
-        if (arvitFloor > '20:15' && '20:15' >= thirtyMin) {
-            arvit = '20:15';
+        const minGap     = addMinutesToTime(satSunset, s.arvitMinGap);
+        if (arvitFloor > s.arvitCap && s.arvitCap >= minGap) {
+            arvit = s.arvitCap;
         } else {
             arvit = arvitFloor;
         }
     } else {
-        // שעון חורף (standard): +5 דקות, nearest-5 (Math.round)
-        arvit = roundToNearest5(addMinutesToTime(arvitBase, 5), 'down');
+        const arvitBase = addMinutesToTime(satSunset, s.arvitOffsetWinter);
+        arvit = roundToNearest5(arvitBase, 'down');
     }
 
     return { mincha, arvit };
@@ -221,10 +259,11 @@ async function buildShabbatRows(season) {
     let passedShavuot = false;
     let firstAfterShavuot = false; // נשא - השבת הראשונה אחרי שבועות
 
+    const settings = getSettings();
     for (const shab of filtered) {
         const satDate = shab.date;
         const friDate = getFridayDateStr(satDate);
-        const times   = calcOneShabbatTimes(friDate, satDate, season);
+        const times   = calcOneShabbatTimes(friDate, satDate, season, settings);
 
         const hebrewName = translateParasha(shab.title);
 
@@ -243,7 +282,7 @@ async function buildShabbatRows(season) {
                 }
                 if (firstAfterShavuot) {
                     // שבת ראשונה אחרי שבועות: שיר השירים + משלי א'-ב'
-                    shirHashirimTime = addMinutesToTime(times.mincha, -25);
+                    shirHashirimTime = addMinutesToTime(times.mincha, -settings.shirOffset);
                     limud = 'משלי ' + getMishleiText(mishleiIndex);
                     mishleiIndex++;
                     firstAfterShavuot = false;
@@ -307,12 +346,13 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
         }).join('');
     }
 
-    const minchaShabbat = isSummer ? '17:00' : '12:45';
+    const s2 = getSettings();
+    const minchaShabbat = isSummer ? s2.minchaShabbatSummer : s2.minchaShabbatWinter;
     const footer = `
         <div class="schedule-footer">
-            <p>שיר השירים ערב שבת – 25 דק' לפני מנחה.</p>
+            <p>שיר השירים ערב שבת – ${s2.shirOffset} דק' לפני מנחה.</p>
             <p>מנחה בשבת – ${minchaShabbat}.</p>
-            <p>מת'אמנה במוצ"ש – 25 דק' לפני ערבית.</p>
+            <p>מת'אמנה במוצ"ש – ${s2.tamhanaOffset} דק' לפני ערבית.</p>
         </div>`;
 
     let html = `
@@ -425,11 +465,12 @@ function buildDocxTable(rows, isSummer) {
 }
 
 function buildFooterParagraphs(isSummer) {
-    const minchaShabbat = isSummer ? '17:00' : '12:45';
+    const s = getSettings();
+    const minchaShabbat = isSummer ? s.minchaShabbatSummer : s.minchaShabbatWinter;
     const lines = [
-        "שיר השירים ערב שבת – 25 דק' לפני מנחה.",
+        `שיר השירים ערב שבת – ${s.shirOffset} דק' לפני מנחה.`,
         `מנחה בשבת – ${minchaShabbat}.`,
-        "מת'אמנה במוצ\"ש – 25 דק' לפני ערבית."
+        `מת'אמנה במוצ"ש – ${s.tamhanaOffset} דק' לפני ערבית.`
     ];
     // ללא alignment וללא bidirectional — run עם rightToLeft גורם לטקסט להיישר לימין כברירת מחדל
     return lines.map(line => new docx.Paragraph({

@@ -101,6 +101,90 @@
                 </select>
             </div>
             <p class="text-muted small">השנה העברית נלקחת מהשדה הראשי למעלה. יש לבחור שנה תחילה.</p>
+
+            <!-- כפתור הגדרות -->
+            <div class="mb-2 text-end">
+                <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#shabbat-settings" aria-expanded="false">
+                    ⚙ הגדרות חישוב
+                </button>
+            </div>
+
+            <!-- פאנל הגדרות -->
+            <div class="collapse mb-3" id="shabbat-settings" dir="rtl">
+                <div class="card card-body bg-light border p-3">
+                    <div class="row g-3">
+                        <!-- עמודה 1: מנחה ערב שבת -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-1 mb-2">מנחה ערב שבת</h6>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">דקות לפני שקיעה</label>
+                                <input type="number" id="setting-mincha-offset" class="form-control form-control-sm" value="20" min="1" max="60">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">עיגול בשעון קיץ</label>
+                                <select id="setting-mincha-round-summer" class="form-select form-select-sm">
+                                    <option value="floor" selected>למטה תמיד (floor)</option>
+                                    <option value="nearest">לקרוב ביותר (nearest)</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">עיגול בשעון חורף</label>
+                                <select id="setting-mincha-round-winter" class="form-select form-select-sm">
+                                    <option value="nearest" selected>לקרוב ביותר (nearest)</option>
+                                    <option value="floor">למטה תמיד (floor)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!-- עמודה 2: ערבית מוצ"ש -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-1 mb-2">ערבית מוצ"ש</h6>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">דקות אחרי שקיעה (שעון קיץ)</label>
+                                <input type="number" id="setting-arvit-offset-summer" class="form-control form-control-sm" value="35" min="1" max="120">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">דקות אחרי שקיעה (שעון חורף)</label>
+                                <input type="number" id="setting-arvit-offset-winter" class="form-control form-control-sm" value="40" min="1" max="120">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">תקרה מקסימלית (שעון קיץ)</label>
+                                <input type="time" id="setting-arvit-cap" class="form-control form-control-sm" value="20:15">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">מינימום דקות מהשקיעה (לפני תקרה)</label>
+                                <input type="number" id="setting-arvit-min-gap" class="form-control form-control-sm" value="30" min="1" max="60">
+                            </div>
+                        </div>
+                        <!-- שורה 2: זמנים קבועים + שיר/מת'אמנה -->
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-1 mb-2">מנחה שבת (זמן קבוע)</h6>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">קיץ</label>
+                                <input type="time" id="setting-mincha-shabbat-summer" class="form-control form-control-sm" value="17:00">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">חורף</label>
+                                <input type="time" id="setting-mincha-shabbat-winter" class="form-control form-control-sm" value="12:45">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold border-bottom pb-1 mb-2">שיר השירים ומת'אמנה</h6>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">שיר השירים — דקות לפני מנחה</label>
+                                <input type="number" id="setting-shir-offset" class="form-control form-control-sm" value="25" min="1" max="60">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">מת'אמנה — דקות לפני ערבית</label>
+                                <input type="number" id="setting-tamhana-offset" class="form-control form-control-sm" value="25" min="1" max="60">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-start mt-2">
+                        <button class="btn btn-sm btn-outline-danger" onclick="resetShabbatSettings()">↺ אפס לברירת מחדל</button>
+                    </div>
+                </div>
+            </div>
+
             <div class="row mb-3">
                 <div class="col">
                     <button type="button" class="btn btn-primary w-100 fw-bold" onclick="calculateShabbatSchedule()">חשב לוח שבתות</button>
