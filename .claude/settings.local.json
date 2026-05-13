@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__prompt-translation-gateway__en2he_translate",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(where python:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)",
+      "mcp__prompt-translation-gateway__he2en_translate",
+      "Bash(python -c \":*)",
+      "Bash(python -c ':*)",
+      "Bash(dir /s \"C:\\\\WindSurf\\\\zmanim_all_months.xlsx\")",
+      "Bash(dir /s \"C:\\\\Users\\\\adi.CLOUD\\\\Downloads\\\\zmanim*.xlsx\")",
+      "Bash(dir /s \"%USERPROFILE%\\\\Desktop\\\\zmanim*.xlsx\")",
+      "Bash(dir /s \"C:\\\\Users\\\\adi.CLOUD\\\\Downloads\\\\zmanim*\" dir /s \"C:\\\\Users\\\\adi.CLOUD\\\\Desktop\\\\zmanim*\" dir /s \"C:\\\\WindSurf\\\\chayeyBerachaLuz\\\\*\")",
+      "Bash(findstr /i \"xlsx\")",
+      "Bash(dir \"C:\\\\WindSurf\\\\chayeyBerachaLuz\")",
+      "Bash(dir \"C:\\\\Users\\\\adi.CLOUD\\\\Downloads\")",
+      "Bash(findstr /i \"zmanim\")",
+      "Bash(pip install:*)",
+      "Bash(node -e:*)",
+      "Bash(python3 -c \"import openpyxl; print\\('openpyxl ok'\\)\")",
+      "Bash(python -c \"import openpyxl; print\\('openpyxl ok'\\)\")",
+      "Bash(python -)",
+      "Bash(npx serve:*)",
+      "Bash(python -c \"import docx; print\\('python-docx OK'\\)\")",
+      "Bash(python compare_docs.py)",
+      "Bash(python compare_docs2.py)",
+      "Bash(python3 -c ':*)",
+      "Bash(git -C /c/WindSurf/chayeyBerachaLuz tag --sort=-v:refname)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git -C /c/WindSurf/chayeyBerachaLuz tag v2.0)",
+      "Bash(git push:*)"
+    ]
+  }
+}

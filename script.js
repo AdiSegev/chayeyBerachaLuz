@@ -20,6 +20,8 @@
 var year = "";
 var numericYear;
 var currentHebrewYear = "";
+var shavuotDawnTime = "";
+var shavuotHolidayDate = "";
 
 // פונקציה להמרת מספר לאותיות עבריות
 function convertToHebrewLetters(num) {
@@ -556,6 +558,14 @@ async function getHolidaySunset(selectedHoliday, showLoading = true) {
           // Calculate the zmanim to a JSON object
           const json = KosherZmanim.getZmanimJson(options);
 	
+    if (selectedHoliday === 'shavuot') {
+        shavuotHolidayDate = holidayDate;
+        if (typeof DAWN_LOOKUP !== 'undefined' && DAWN_LOOKUP[holidayDate]) {
+            shavuotDawnTime = DAWN_LOOKUP[holidayDate];
+        } else if (json.BasicZmanim.Alos72) {
+            shavuotDawnTime = json.BasicZmanim.Alos72.split('T')[1].split('+')[0].slice(0, 5);
+        }
+    }
     return json.BasicZmanim.Sunset;
   } catch (error) {
     console.error('Error fetching Pesach sunset time:', error);

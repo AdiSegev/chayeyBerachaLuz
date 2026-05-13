@@ -1,12 +1,35 @@
 // shavuot.js
 
 // פונקציה מרכזית לחישוב זמני שבועות
-function calculateShavuotTimes(selectedDay, sunsetTime) {
+function calculateShavuotTimes(selectedDay, sunsetTime, dawnTime) {
+    let resolvedDawn = dawnTime;
+    if (!resolvedDawn && typeof shavuotHolidayDate !== 'undefined' && shavuotHolidayDate) {
+        if (typeof DAWN_LOOKUP !== 'undefined' && DAWN_LOOKUP[shavuotHolidayDate]) {
+            resolvedDawn = DAWN_LOOKUP[shavuotHolidayDate];
+            shavuotDawnTime = resolvedDawn;
+        } else {
+            try {
+                const json = KosherZmanim.getZmanimJson({
+                    date: shavuotHolidayDate,
+                    timeZoneId: "Asia/Jerusalem",
+                    latitude: 31.849436,
+                    longitude: 35.035721
+                });
+                if (json.BasicZmanim.Alos72) {
+                    resolvedDawn = json.BasicZmanim.Alos72.split('T')[1].split('+')[0].slice(0, 5);
+                    shavuotDawnTime = resolvedDawn;
+                }
+            } catch(e) {}
+        }
+    }
+    const shachritA = resolvedDawn ? addMinutesToTime(resolvedDawn, 10) : '';
     let times;
     if (selectedDay === 'monday' || selectedDay === 'wednesday') {
         times = {
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
-            shachrit: "8:00",
+            kriaMoed: "22:30",
+            shachritA: shachritA,
+            shachritB: "8:00",
             rut: addMinutesToTime(sunsetTime, -75),
             mincha: addMinutesToTime(sunsetTime, -15),
             arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
@@ -14,7 +37,9 @@ function calculateShavuotTimes(selectedDay, sunsetTime) {
     } else if (selectedDay === 'sunday') {
         times = {
             mizmorShelChag: addMinutesToTime(sunsetTime, 5),
-            shachrit: "8:00",
+            kriaMoed: "23:00",
+            shachritA: shachritA,
+            shachritB: "8:00",
             rut: addMinutesToTime(sunsetTime, -85),
             mincha: addMinutesToTime(sunsetTime, -15),
             arvitMotzaiChag: addMinutesToTime(sunsetTime, 30)
@@ -22,7 +47,9 @@ function calculateShavuotTimes(selectedDay, sunsetTime) {
     } else if (selectedDay === 'friday') {
         times = {
             minchaErevChag: addMinutesToTime(sunsetTime, -15),
-            shachrit: "8:00",
+            kriaMoed: "22:30",
+            shachritA: shachritA,
+            shachritB: "8:00",
             rut: addMinutesToTime(sunsetTime, -125),
             mincha: addMinutesToTime(sunsetTime, -50),
             shirHashirim: addMinutesToTime(sunsetTime, -25)
@@ -36,7 +63,7 @@ function generateShavuotContent(selectedYear) {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;
 
-    const times = calculateShavuotTimes(selectedDay, sunsetTime);
+    const times = calculateShavuotTimes(selectedDay, sunsetTime, typeof shavuotDawnTime !== 'undefined' ? shavuotDawnTime : '');
 
     let htmlContent = `
         <div style="text-align: center;">
@@ -54,7 +81,9 @@ function generateShavuotContent(selectedYear) {
     }
 
     htmlContent += `
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachrit}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קריאי מועד:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kriaMoed}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין א'):</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritA}</td></tr>
+        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין ב'):</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritB}</td></tr>
         <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>רות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.rut}</td></tr>
     `;
 
@@ -91,7 +120,7 @@ function generateShavuotDocument() {
     const sunsetTime = document.getElementById('sunset-time').value;
     const selectedYear = document.getElementById('hebrew-year').value;
 
-    const times = calculateShavuotTimes(selectedDay, sunsetTime);
+    const times = calculateShavuotTimes(selectedDay, sunsetTime, typeof shavuotDawnTime !== 'undefined' ? shavuotDawnTime : '');
 
     const doc = new docx.Document({
         styles: {
@@ -168,7 +197,23 @@ function generateShavuotDocument() {
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: `שחרית: ${times.shachrit}`,
+                        text: `קריאי מועד: ${times.kriaMoed}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שחרית (מניין א'): ${times.shachritA}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שחרית (מניין ב'): ${times.shachritB}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
@@ -228,42 +273,19 @@ function generateShavuotWordFromEdited(editedData, selectedYear) {
     // המרת הנתונים הערוכים למערך לזיהוי קל יותר
     const prayerArray = Object.values(editedData).filter(item => !item.isHeader);
     
-    // זיהוי יום השבוע לפי הזמנים הקיימים
-    if (prayerArray.length > 0) {
-        const firstPrayer = prayerArray[0].displayName;
-        
-        if (firstPrayer === 'מזמור של חג') {
-            // ראשון
-            selectedDay = 'sunday';
-            times.mizmorShelChag = prayerArray[0].time;
-            times.shachrit = prayerArray[1].time;
-            times.rut = prayerArray[2].time;
-            times.mincha = prayerArray[3].time;
-            times.arvitMotzaiChag = prayerArray[4].time;
-        } else if (firstPrayer === 'מנחה ערב חג') {
-            // זיהוי אם זה שישי או יום רגיל לפי התוכן
-            // בשישי יש שיר השירים, בשני/רביעי יש ערבית מוצאי חג
-            const hasShirHashirim = prayerArray.some(prayer => prayer.displayName === 'שיר השירים');
-            
-            if (hasShirHashirim) {
-                // שישי - יש שיר השירים, אין ערבית מוצאי חג
-                selectedDay = 'friday';
-                times.minchaErevChag = prayerArray[0].time;
-                times.shachrit = prayerArray[1].time;
-                times.rut = prayerArray[2].time;
-                times.mincha = prayerArray[3].time;
-                times.shirHashirim = prayerArray[4].time;
-            } else {
-                // יום רגיל - שני/רביעי, יש ערבית מוצאי חג
-                selectedDay = 'other';
-                times.minchaErevChag = prayerArray[0].time;
-                times.shachrit = prayerArray[1].time;
-                times.rut = prayerArray[2].time;
-                times.mincha = prayerArray[3].time;
-                times.arvitMotzaiChag = prayerArray[4].time;
-            }
-        }
-    }
+    // מיפוי לפי displayName
+    prayerArray.forEach(prayer => {
+        const name = prayer.displayName;
+        if (name === 'מזמור של חג') { times.mizmorShelChag = prayer.time; selectedDay = 'sunday'; }
+        else if (name === 'מנחה ערב חג') { times.minchaErevChag = prayer.time; if (!selectedDay) selectedDay = 'other'; }
+        else if (name === 'קריאי מועד') { times.kriaMoed = prayer.time; }
+        else if (name === "שחרית (מניין א')") { times.shachritA = prayer.time; }
+        else if (name === "שחרית (מניין ב')") { times.shachritB = prayer.time; }
+        else if (name === 'רות') { times.rut = prayer.time; }
+        else if (name === 'מנחה') { times.mincha = prayer.time; }
+        else if (name === 'שיר השירים') { times.shirHashirim = prayer.time; selectedDay = 'friday'; }
+        else if (name === 'ערבית מוצאי חג') { times.arvitMotzaiChag = prayer.time; }
+    });
 
     const doc = new docx.Document({
         styles: {
@@ -340,7 +362,23 @@ function generateShavuotWordFromEdited(editedData, selectedYear) {
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
                     new docx.Paragraph({
-                        text: `שחרית: ${times.shachrit}`,
+                        text: `קריאי מועד: ${times.kriaMoed}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שחרית (מניין א'): ${times.shachritA}`,
+                        alignment: docx.AlignmentType.CENTER,
+                        bidirectional: true,
+                        style: "normalStyle"
+                    }),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph(""),
+                    new docx.Paragraph({
+                        text: `שחרית (מניין ב'): ${times.shachritB}`,
                         alignment: docx.AlignmentType.CENTER,
                         bidirectional: true,
                         style: "normalStyle"
