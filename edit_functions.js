@@ -43,6 +43,17 @@ function extractPrayerTimesFromHTML(htmlContent) {
                             isHeader: false
                         };
                     }
+                } else if (cells.length === 1) {
+                    // הוספת שורה ככותרת משנה (למשל טקסט אופציונלי שמשתרע על 2 עמודות)
+                    const uniqueKey = `header_${counter}`;
+                    counter++;
+                    
+                    prayerTimes[uniqueKey] = {
+                        displayName: cells[0].textContent.trim(),
+                        originalHTML: row.outerHTML,
+                        time: '',
+                        isHeader: true
+                    };
                 }
             });
         }

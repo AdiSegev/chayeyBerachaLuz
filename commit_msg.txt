@@ -1,0 +1,6 @@
+feat: optional text for Shavuot and image export improvements
+
+- Add optional text input before Shacharit in Shavuot (supported in edit modal and Word export)
+- Image export UI tweaks: larger fonts, remove bold styling from standard rows, and lift content to prevent bottom overflow
+- Add support for extracting single-cell rows (colspan=2) as sub-headers in the edit modal
+- Download CDN libraries locally as a fallback for offline use

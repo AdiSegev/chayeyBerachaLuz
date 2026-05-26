@@ -62,8 +62,12 @@ function calculateShavuotTimes(selectedDay, sunsetTime, dawnTime) {
 function generateShavuotContent(selectedYear) {
     const selectedDay = document.getElementById('day-of-week').value;
     const sunsetTime = document.getElementById('sunset-time').value;
+    const optionalTextEl = document.getElementById('shavuot-optional-text');
+    const optionalText = optionalTextEl ? optionalTextEl.value.trim() : '';
 
     const times = calculateShavuotTimes(selectedDay, sunsetTime, typeof shavuotDawnTime !== 'undefined' ? shavuotDawnTime : '');
+
+    const p = optionalText ? "6px" : "10px";
 
     let htmlContent = `
         <div style="text-align: center;">
@@ -72,34 +76,43 @@ function generateShavuotContent(selectedYear) {
 
     if (selectedDay === 'sunday') {
         htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מזמור של חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mizmorShelChag}</td></tr>
+            <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>מזמור של חג:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.mizmorShelChag}</td></tr>
         `;
     } else {
         htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
+            <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה ערב חג:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.minchaErevChag}</td></tr>
         `;
     }
 
     htmlContent += `
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>קריאי מועד:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.kriaMoed}</td></tr>
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין א'):</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritA}</td></tr>
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין ב'):</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritB}</td></tr>
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>רות:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.rut}</td></tr>
+        <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>קריאי מועד:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.kriaMoed}</td></tr>
+    `;
+
+    if (optionalText) {
+        htmlContent += `
+            <tr><td colspan="2" style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${optionalText}</td></tr>
+        `;
+    }
+
+    htmlContent += `
+        <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין א'):</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritA}</td></tr>
+        <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>שחרית (מניין ב'):</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.shachritB}</td></tr>
+        <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>רות:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.rut}</td></tr>
     `;
 
     htmlContent += `
-        <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
+        <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>מנחה:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.mincha}</td></tr>
     `;
 
     if (selectedDay === 'friday') {
         htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
+            <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>שיר השירים:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.shirHashirim}</td></tr>
         `;
     }
 
     if (selectedDay !== 'friday') {
         htmlContent += `
-            <tr><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי חג:</strong></td><td style="padding: 10px; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiChag}</td></tr>
+            <tr><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;"><strong>ערבית מוצאי חג:</strong></td><td style="padding: ${p}; text-align: center; border-bottom: 1px solid #ddd;">${times.arvitMotzaiChag}</td></tr>
         `;
     }
 
@@ -204,6 +217,19 @@ function generateShavuotDocument() {
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
+                    
+                    // הוספת הטקסט האופציונלי אם קיים
+                    ...(document.getElementById('shavuot-optional-text') && document.getElementById('shavuot-optional-text').value.trim() ? [
+                        new docx.Paragraph({
+                            text: document.getElementById('shavuot-optional-text').value.trim(),
+                            alignment: docx.AlignmentType.CENTER,
+                            bidirectional: true,
+                            style: "normalStyle"
+                        }),
+                        new docx.Paragraph(""),
+                        new docx.Paragraph("")
+                    ] : []),
+
                     new docx.Paragraph({
                         text: `שחרית (מניין א'): ${times.shachritA}`,
                         alignment: docx.AlignmentType.CENTER,
@@ -369,6 +395,19 @@ function generateShavuotWordFromEdited(editedData, selectedYear) {
                     }),
                     new docx.Paragraph(""),
                     new docx.Paragraph(""),
+                    
+                    // הוספת הטקסט האופציונלי אם קיים בעריכה (נמצא ככותרת)
+                    ...(Object.values(editedData).filter(item => item.isHeader).length > 0 ? [
+                        new docx.Paragraph({
+                            text: Object.values(editedData).filter(item => item.isHeader)[0].displayName,
+                            alignment: docx.AlignmentType.CENTER,
+                            bidirectional: true,
+                            style: "normalStyle"
+                        }),
+                        new docx.Paragraph(""),
+                        new docx.Paragraph("")
+                    ] : []),
+
                     new docx.Paragraph({
                         text: `שחרית (מניין א'): ${times.shachritA}`,
                         alignment: docx.AlignmentType.CENTER,

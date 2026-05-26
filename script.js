@@ -323,6 +323,15 @@ function updateDayOptions() {
 
     let allowedDays;
 
+    const shavuotOptionalTextContainer = document.getElementById('shavuot-optional-text-container');
+    if (shavuotOptionalTextContainer) {
+        if (holiday === 'shavuot') {
+            shavuotOptionalTextContainer.style.display = 'block';
+        } else {
+            shavuotOptionalTextContainer.style.display = 'none';
+        }
+    }
+
     switch (holiday) {
         case 'rosh_hashana':
 		case 'sukkot':
@@ -759,22 +768,22 @@ function generateImageDocument(customContent = null, customYear = null, customHo
         const textLength = holidayContent.replace(/<[^>]*>/g, '').length;
         let contentFontSize;
         if (textLength < 200) {
-            contentFontSize = 36;
+            contentFontSize = 44;
         } else if (textLength < 400) {
-            contentFontSize = 30;
+            contentFontSize = 38;
         } else if (textLength < 600) {
-            contentFontSize = 27;
+            contentFontSize = 34;
         } else if (textLength < 800) {
-            contentFontSize = 24;
+            contentFontSize = 30;
         } else {
-            contentFontSize = 21;
+            contentFontSize = 26;
         }
         
         // יצירת מיכל HTML עם התוכן המלא
         const container = document.createElement('div');
         container.style.cssText = `
             width: 500px;
-            padding: 40px 20px 20px 20px;
+            padding: 10px 20px 20px 20px;
             font-family: 'Pfennig', 'Arial', sans-serif;
             direction: rtl;
             text-align: center;
@@ -782,7 +791,7 @@ function generateImageDocument(customContent = null, customYear = null, customHo
             color: #2c5530;
             line-height: 1.4;
             position: absolute;
-            top: 140px;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
         `;
@@ -830,13 +839,16 @@ function generateImageDocument(customContent = null, customYear = null, customHo
         
         container.appendChild(titleContainer);
         
-        // הוספת התוכן
+        // הוספת התוכן ללא הדגשות
         const contentElement = document.createElement('div');
         contentElement.style.cssText = `
             font-size: ${contentFontSize}px;
             color: #2c5530;
+            font-weight: normal;
         `;
-        contentElement.innerHTML = holidayContent;
+        // הסרת תגיות strong ו-b כדי שהטקסט לא יהיה מודגש
+        const unboldedContent = holidayContent.replace(/<\/?strong>/g, '').replace(/<\/?b>/g, '');
+        contentElement.innerHTML = unboldedContent;
         
         // תיקון רוחב טבלאות כדי למנוע שבירת שורות
         const tables = contentElement.querySelectorAll('table');
