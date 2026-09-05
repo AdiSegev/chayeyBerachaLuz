@@ -752,6 +752,7 @@ function generateImageDocument(customContent = null, customYear = null, customHo
     // יצירת קנבס לעבודה עם תמונה
     const canvas = document.createElement('canvas');
     canvas.width = 800;
+    // הגובה ייקבע דינמית לאחר חישוב גובה התוכן
     canvas.height = 1000;
     const ctx = canvas.getContext('2d');
     
@@ -942,9 +943,18 @@ function generateImageDocument(customContent = null, customYear = null, customHo
                 useCORS: true,
                 allowTaint: true
             }).then(contentCanvas => {
-                // ציור התוכן ממורכז ברוחב אבל מתחיל מלמעלה
                 const x = (canvas.width - contentCanvas.width / 2) / 2;
-                const y = 140; // מרווח מוגדל מלמעלה
+                const y = 140; // מרווח מלמעלה
+                const bottomPadding = 150; // ריפוד תחתון
+
+                // חישוב גובה דינמי: מרווח עליון + גובה התוכן + ריפוד תחתון
+                const requiredHeight = y + Math.ceil(contentCanvas.height / 2) + bottomPadding;
+                canvas.height = Math.max(requiredHeight, 1000);
+
+                // ציור תמונת הרקע מחדש בגובה החדש
+                ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
+
+                // ציור התוכן
                 ctx.drawImage(contentCanvas, x, y, contentCanvas.width / 2, contentCanvas.height / 2);
                 
                 // הורדת התמונה
