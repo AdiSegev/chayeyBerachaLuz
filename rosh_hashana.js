@@ -26,7 +26,7 @@ function calculateRoshHashanaTimes(selectedDay, sunsetTime) {
     } else if (selectedDay === 'saturday') {
         times = {
             shirHashirim: addMinutesToTime(sunsetTime, -55),
-            minchaErevYomtov: addMinutesToTime(sunsetTime, -30),
+            minchaErevYomtov: addMinutesToTime(sunsetTime, -25),
             shachrit: "7:30",
             tehillim: "16:00",
             minchaRoshHashana: "17:00",
@@ -584,11 +584,11 @@ function generateRoshHashanaWordFromEdited(editedData, selectedYear) {
                                 bidirectional: true,
                                 style: "normalStyle"
                             }),
-                            
+
                         ] : [
                             new docx.Paragraph(""),  // שורה ריקה
                             new docx.Paragraph("")
-                            
+
                         ]),
 
                     new docx.Paragraph(""),
