@@ -8,7 +8,7 @@ function calculateRoshHashanaTimes(selectedDay, sunsetTime) {
             minchaErevYomtov: addMinutesToTime(sunsetTime, -20),
             shachrit: "7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
-            minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
+            minchaRoshHashana: addMinutesToTime(sunsetTime, -30),
             minchaYomTovSheni: addMinutesToTime(sunsetTime, -35),
             shirHashirim: sunsetTime,
             lechuNeranena: addMinutesToTime(sunsetTime, 25)
@@ -18,9 +18,9 @@ function calculateRoshHashanaTimes(selectedDay, sunsetTime) {
             minchaErevYomtov: addMinutesToTime(sunsetTime, -20),
             shachrit: "7:30",
             tehillim: addMinutesToTime(sunsetTime, -80),
-            minchaRoshHashana: addMinutesToTime(sunsetTime, -20),
+            minchaRoshHashana: addMinutesToTime(sunsetTime, -30),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
-            minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
+            minchaYomTovSheni: addMinutesToTime(sunsetTime, -30),
             arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     } else if (selectedDay === 'saturday') {
@@ -29,10 +29,10 @@ function calculateRoshHashanaTimes(selectedDay, sunsetTime) {
             minchaErevYomtov: addMinutesToTime(sunsetTime, -25),
             shachrit: "7:30",
             tehillim: "16:00",
-            minchaRoshHashana: "17:00",
+            minchaRoshHashana: "13:15",
             arvitYomTovSheni: addMinutesToTime(sunsetTime, 25),
             tehillimYomTovSheni: addMinutesToTime(sunsetTime, -80),
-            minchaYomTovSheni: addMinutesToTime(sunsetTime, -20),
+            minchaYomTovSheni: addMinutesToTime(sunsetTime, -30),
             arvitYomTovSheni2: addMinutesToTime(sunsetTime, 30)
         };
     }
