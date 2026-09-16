@@ -117,10 +117,37 @@ function roundFloor5(timeStr) {
 }
 
 // בדיקה האם תאריך נמצא בשעון קיץ ישראלי
+// ישראל: שעון קיץ מתחיל בשישי האחרון לפני 2 באפריל, בשעה 2:00 לפנות בוקר
+//         → שבת של אותו שבוע כבר בשעון קיץ
+// ישראל: שעון חורף חוזר בראשון האחרון של אוקטובר בשעה 2:00 לפנות בוקר
+//         → שבת שלפני הראשון עדיין בשעון קיץ
 function isInDST(dateStr) {
-    // ישראל 2025: 30.3 – 25.10 | ישראל 2026: 29.3 – 25.10
-    return (dateStr >= '2025-03-30' && dateStr <= '2025-10-25') ||
-           (dateStr >= '2026-03-29' && dateStr <= '2026-10-25');
+    const d = new Date(dateStr + 'T12:00:00');
+    const year = d.getFullYear();
+    // מחשב תאריך מקומי (לא UTC) כדי להימנע מבעיית offset
+    function localDateStr(dt) {
+        const yy = dt.getFullYear();
+        const mm = String(dt.getMonth() + 1).padStart(2, '0');
+        const dd = String(dt.getDate()).padStart(2, '0');
+        return `${yy}-${mm}-${dd}`;
+    }
+    // שישי האחרון לפני 2 באפריל (= שישי אחרון שהוא <=1 באפריל)
+    function lastFridayBeforeApril2(y) {
+        const apr1 = new Date(y, 3, 1, 12, 0, 0); // 1 באפריל (month index 3)
+        const dow = apr1.getDay(); // 0=ראשון, 5=שישי
+        const daysBack = (dow + 2) % 7; // מרחק לשישי (5) הקרוב לאחור
+        apr1.setDate(apr1.getDate() - daysBack);
+        return localDateStr(apr1);
+    }
+    // ראשון אחרון של אוקטובר
+    function lastSundayOfOctober(y) {
+        const last = new Date(y, 10, 0, 12, 0, 0); // 31 באוקטובר
+        last.setDate(last.getDate() - last.getDay()); // חזור לראשון
+        return localDateStr(last);
+    }
+    const dstStart = lastFridayBeforeApril2(year); // שבת שאחריו כבר קיץ
+    const dstEnd   = lastSundayOfOctober(year);    // שבת שלפניו עדיין קיץ
+    return dateStr >= dstStart && dateStr < dstEnd;
 }
 
 // מחזיר תאריך שישי מתוך תאריך שבת (YYYY-MM-DD)
@@ -169,11 +196,12 @@ function resetShabbatSettings() {
     set('setting-tamhana-offset', 25);
 }
 
-// שליפת זמן שקיעה מהטבלה הסטטית
+// שליפת זמן שקיעה מהטבלה הסטטית — מפתח MM-DD בלבד (UTC+2) והוספת 60 דק' בשעון קיץ
 function getSunsetFromLookup(dateStr) {
-    const t = SUNSET_LOOKUP[dateStr];
+    const key = dateStr.slice(5); // YYYY-MM-DD → MM-DD
+    const t = SUNSET_LOOKUP[key];
     if (!t) throw new Error(`No sunset data for ${dateStr}`);
-    return t;
+    return isInDST(dateStr) ? addMinutesToTime(t, 60) : t;
 }
 
 // חישוב זמני שבת אחת
@@ -233,20 +261,21 @@ async function buildShabbatRows(season) {
     const items = await fetchHebrewCalendar(yearNum);
 
     // גבולות עונה
+    const pesachDate     = findHolidayDate(items, 'Pesach I') || findHolidayDate(items, 'Pesach');
     const pesachVIIDate  = findHolidayDate(items, 'Pesach VII');
     const shavuotDate    = findHolidayDate(items, 'Shavuot I') || findHolidayDate(items, 'Shavuot');
-    const simchatTorah   = findHolidayDate(items, 'Shmini Atzeret') || findHolidayDate(items, 'Simchat Torah');
+    const roshHashanaDate = findHolidayDate(items, 'Rosh Hashana I') || findHolidayDate(items, 'Rosh Hashana');
 
     // שבתות (פרשיות): category=parashat, יש date
     const shabbatot = items.filter(i => i.category === 'parashat' && i.date);
 
     let filtered;
     if (season === 'summer') {
-        // אחרי שביעי של פסח ועד סוף השנה
+        // קיץ: אחרי שביעי של פסח ועד סוף השנה העברית
         filtered = shabbatot.filter(i => i.date > pesachVIIDate);
     } else {
-        // חורף: אחרי שמחת תורה ועד לפני שביעי של פסח — שניהם בתוך אותה שנה עברית
-        filtered = shabbatot.filter(i => i.date > simchatTorah && i.date < pesachVIIDate);
+        // חורף: אחרי ראש השנה ועד לפני פסח א'
+        filtered = shabbatot.filter(i => i.date > roshHashanaDate && i.date < pesachDate);
     }
 
     // מיין לפי תאריך
@@ -281,8 +310,9 @@ async function buildShabbatRows(season) {
                     firstAfterShavuot = true;
                 }
                 if (firstAfterShavuot) {
-                    // שבת ראשונה אחרי שבועות: שיר השירים + משלי א'-ב'
-                    shirHashirimTime = addMinutesToTime(times.mincha, -settings.shirOffset);
+                    // שבת ראשונה אחרי שבועות: מנחה מוקדמת ושיר השירים אחריה
+                    shirHashirimTime = times.mincha;
+                    times.mincha = addMinutesToTime(times.mincha, -settings.shirOffset);
                     limud = 'משלי ' + getMishleiText(mishleiIndex);
                     mishleiIndex++;
                     firstAfterShavuot = false;
@@ -327,7 +357,7 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
         return rowList.map(r => {
             let minchaCell = r.mincha;
             if (r.shirHashirimTime) {
-                minchaCell = `שיר השירים ${r.shirHashirimTime}<br><small>(מנחה ${r.mincha})</small>`;
+                minchaCell = `מנחה ${r.mincha}<br><small>(שיר השירים ${r.shirHashirimTime})</small>`;
             }
             if (isSummer) {
                 return `<tr>
@@ -439,7 +469,7 @@ function buildDocxTable(rows, isSummer) {
     const dataRows = rows.map((r, idx) => {
         let minchaCell;
         if (r.shirHashirimTime) {
-            minchaCell = makeCellMultiLine([`שיר השירים ${r.shirHashirimTime}`, `(מנחה ${r.mincha})`], idx);
+            minchaCell = makeCellMultiLine([`מנחה ${r.mincha}`, `(שיר השירים ${r.shirHashirimTime})`], idx);
         } else {
             minchaCell = makeCell(r.mincha, false, idx);
         }
