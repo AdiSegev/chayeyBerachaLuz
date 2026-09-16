@@ -264,7 +264,7 @@ async function buildShabbatRows(season) {
     const pesachDate     = findHolidayDate(items, 'Pesach I') || findHolidayDate(items, 'Pesach');
     const pesachVIIDate  = findHolidayDate(items, 'Pesach VII');
     const shavuotDate    = findHolidayDate(items, 'Shavuot I') || findHolidayDate(items, 'Shavuot');
-    const roshHashanaDate = findHolidayDate(items, 'Rosh Hashana I') || findHolidayDate(items, 'Rosh Hashana');
+    const simchatTorahDate = findHolidayDate(items, 'Simchat Torah') || findHolidayDate(items, 'Shmini Atzeret') || findHolidayDate(items, 'Sukkot VII');
 
     // שבתות (פרשיות): category=parashat, יש date
     const shabbatot = items.filter(i => i.category === 'parashat' && i.date);
@@ -274,8 +274,8 @@ async function buildShabbatRows(season) {
         // קיץ: אחרי שביעי של פסח ועד סוף השנה העברית
         filtered = shabbatot.filter(i => i.date > pesachVIIDate);
     } else {
-        // חורף: אחרי ראש השנה ועד לפני פסח א'
-        filtered = shabbatot.filter(i => i.date > roshHashanaDate && i.date < pesachDate);
+        // חורף: אחרי שמחת תורה / שמיני עצרת ועד לפני פסח א' (מתחיל בשבת בראשית)
+        filtered = shabbatot.filter(i => i.date > simchatTorahDate && i.date < pesachDate);
     }
 
     // מיין לפי תאריך
