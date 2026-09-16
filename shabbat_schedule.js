@@ -323,11 +323,16 @@ async function buildShabbatRows(season) {
             }
         }
 
+        const isSatDST = isInDST(satDate);
+        const minchaShabbat = isSatDST ? settings.minchaShabbatSummer : settings.minchaShabbatWinter;
+
         rows.push({
             parasha: hebrewName,
             mincha: times.mincha,
             shirHashirimTime,  // null אלא אם שבת ראשונה אחרי שבועות
             limud,
+            minchaShabbat,
+            isDST: isSatDST,
             arvit: times.arvit,
             date: satDate
         });
@@ -341,6 +346,7 @@ async function buildShabbatRows(season) {
 // ----------------------------------------------------------------
 function generateShabbatScheduleHTML(rows, season, hebrewYear) {
     const isSummer = season === 'summer';
+    const hasMinchaShabbatCol = !isSummer && rows.some(r => r.isDST) && rows.some(r => !r.isDST);
     const title = `זמני תפילות ${isSummer ? 'קיץ' : 'חורף'} ${hebrewYear} - מניין תימני - חיי ברכה`;
 
     // פיצול זהה לייצוא Word: קיץ→דברים, חורף→יתרו
@@ -351,7 +357,9 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
 
     const colHeaders = isSummer
         ? `<th>פרשה</th><th>מנחה ערב שבת</th><th>לימוד</th><th>ערבית מוצ"ש</th>`
-        : `<th>פרשה</th><th>מנחה ערב שבת</th><th>ערבית מוצ"ש</th>`;
+        : hasMinchaShabbatCol
+            ? `<th>פרשה</th><th>מנחה ערב שבת</th><th>מנחה שבת</th><th>ערבית מוצ"ש</th>`
+            : `<th>פרשה</th><th>מנחה ערב שבת</th><th>ערבית מוצ"ש</th>`;
 
     function buildRows(rowList) {
         return rowList.map(r => {
@@ -366,6 +374,13 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
                     <td>${r.limud}</td>
                     <td>${r.arvit}</td>
                 </tr>`;
+            } else if (hasMinchaShabbatCol) {
+                return `<tr>
+                    <td>${r.parasha}</td>
+                    <td>${minchaCell}</td>
+                    <td>${r.minchaShabbat}</td>
+                    <td>${r.arvit}</td>
+                </tr>`;
             } else {
                 return `<tr>
                     <td>${r.parasha}</td>
@@ -378,10 +393,11 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
 
     const s2 = getSettings();
     const minchaShabbat = isSummer ? s2.minchaShabbatSummer : s2.minchaShabbatWinter;
+    const minchaShabbatFooter = hasMinchaShabbatCol ? '' : `<p>מנחה בשבת – ${minchaShabbat}.</p>`;
     const footer = `
         <div class="schedule-footer">
             <p>שיר השירים ערב שבת – ${s2.shirOffset} דק' לפני מנחה.</p>
-            <p>מנחה בשבת – ${minchaShabbat}.</p>
+            ${minchaShabbatFooter}
             <p>מת'אמנה במוצ"ש – ${s2.tamhanaOffset} דק' לפני ערבית.</p>
         </div>`;
 
@@ -410,10 +426,12 @@ function generateShabbatScheduleHTML(rows, season, hebrewYear) {
 // ----------------------------------------------------------------
 // ייצוא Word
 // ----------------------------------------------------------------
-function buildDocxTable(rows, isSummer) {
+function buildDocxTable(rows, isSummer, hasMinchaShabbatCol) {
     const headerCells = isSummer
         ? ['פרשה', 'מנחה ערב שבת', 'לימוד', 'ערבית מוצ"ש']
-        : ['פרשה', 'מנחה ערב שבת', 'ערבית מוצ"ש'];
+        : hasMinchaShabbatCol
+            ? ['פרשה', 'מנחה ערב שבת', 'מנחה שבת', 'ערבית מוצ"ש']
+            : ['פרשה', 'מנחה ערב שבת', 'ערבית מוצ"ש'];
 
     // docx.js מרנדר עמודות LTR — הופכים את הסדר כדי שהתצוגה תהיה RTL נכון
     headerCells.reverse();
@@ -474,10 +492,14 @@ function buildDocxTable(rows, isSummer) {
             minchaCell = makeCell(r.mincha, false, idx);
         }
 
-        // סדר הפוך (LTR→RTL): ערבית, [לימוד], מנחה, פרשה
+        // סדר הפוך (LTR→RTL): ערבית, [לימוד / מנחה שבת], מנחה, פרשה
         const cells = [];
         cells.push(makeCell(r.arvit, false, idx));
-        if (isSummer) cells.push(makeCell(r.limud, false, idx));
+        if (isSummer) {
+            cells.push(makeCell(r.limud, false, idx));
+        } else if (hasMinchaShabbatCol) {
+            cells.push(makeCell(r.minchaShabbat, false, idx));
+        }
         cells.push(minchaCell);
         cells.push(makeCell(r.parasha, false, idx));
 
@@ -494,14 +516,16 @@ function buildDocxTable(rows, isSummer) {
     });
 }
 
-function buildFooterParagraphs(isSummer) {
+function buildFooterParagraphs(isSummer, hasMinchaShabbatCol) {
     const s = getSettings();
     const minchaShabbat = isSummer ? s.minchaShabbatSummer : s.minchaShabbatWinter;
     const lines = [
         `שיר השירים ערב שבת – ${s.shirOffset} דק' לפני מנחה.`,
-        `מנחה בשבת – ${minchaShabbat}.`,
-        `מת'אמנה במוצ"ש – ${s.tamhanaOffset} דק' לפני ערבית.`
     ];
+    if (!hasMinchaShabbatCol) {
+        lines.push(`מנחה בשבת – ${minchaShabbat}.`);
+    }
+    lines.push(`מת'אמנה במוצ"ש – ${s.tamhanaOffset} דק' לפני ערבית.`);
     // ללא alignment וללא bidirectional — run עם rightToLeft גורם לטקסט להיישר לימין כברירת מחדל
     return lines.map(line => new docx.Paragraph({
         children: [new docx.TextRun({ text: line, font: 'Calibri', size: 36, bold: true, rightToLeft: true })]
@@ -516,6 +540,7 @@ async function generateShabbatScheduleDocument() {
     const loadingData = showLoadingModal('טוען לוח שבתות', 'מחשב זמני תפילה...');
     try {
         const rows = await buildShabbatRows(season);
+        const hasMinchaShabbatCol = !isSummer && rows.some(r => r.isDST) && rows.some(r => !r.isDST);
 
         // פיצול: קיץ→דברים, חורף→יתרו
         const splitParasha = isSummer ? 'דברים' : 'יתרו';
@@ -543,17 +568,17 @@ async function generateShabbatScheduleDocument() {
         const children = [
             makeTitleParagraph(false),
             new docx.Paragraph(""),
-            buildDocxTable(part1, isSummer),
+            buildDocxTable(part1, isSummer, hasMinchaShabbatCol),
             new docx.Paragraph(""),
-            ...buildFooterParagraphs(isSummer)
+            ...buildFooterParagraphs(isSummer, hasMinchaShabbatCol)
         ];
 
         if (part2.length > 0) {
             children.push(makeTitleParagraph(true));
             children.push(new docx.Paragraph(""));
-            children.push(buildDocxTable(part2, isSummer));
+            children.push(buildDocxTable(part2, isSummer, hasMinchaShabbatCol));
             children.push(new docx.Paragraph(""));
-            children.push(...buildFooterParagraphs(isSummer));
+            children.push(...buildFooterParagraphs(isSummer, hasMinchaShabbatCol));
         }
 
         const doc = new docx.Document({ sections: [{ children }] });
