@@ -463,11 +463,16 @@ function buildDocxTable(rows, isSummer, hasMinchaShabbatCol) {
 
     function makeCellMultiLine(lines, rowIndex) {
         const shade = ROW_SHADES[rowIndex % 2];
-        const paragraphs = lines.map(line => new docx.Paragraph({
-            children: [new docx.TextRun({ text: line, font: FONT, size: FONT_SIZE, bold: false })],
+        const paragraphs = lines.map((line, lIdx) => new docx.Paragraph({
+            children: [new docx.TextRun({
+                text: line,
+                font: FONT,
+                size: lIdx === 0 ? FONT_SIZE : 24,
+                bold: false
+            })],
             alignment: docx.AlignmentType.CENTER,
             bidirectional: true,
-            spacing: { line: 360, lineRule: 'auto' }
+            spacing: { line: 280, lineRule: 'auto', before: 0, after: 0 }
         }));
         return new docx.TableCell({
             children: paragraphs,
@@ -505,7 +510,7 @@ function buildDocxTable(rows, isSummer, hasMinchaShabbatCol) {
 
         return new docx.TableRow({
             children: cells,
-            height: { value: 518, rule: 'exact' }
+            height: { value: r.shirHashirimTime ? 750 : 518, rule: 'atLeast' }
         });
     });
 
