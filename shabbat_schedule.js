@@ -175,7 +175,7 @@ function getSettings() {
         arvitCap:             v('setting-arvit-cap', '20:15'),
         arvitMinGap:          n('setting-arvit-min-gap', 30),
         minchaShabbatSummer:  v('setting-mincha-shabbat-summer', '17:00'),
-        minchaShabbatWinter:  v('setting-mincha-shabbat-winter', '12:45'),
+        minchaShabbatWinter:  v('setting-mincha-shabbat-winter', '12:40'),
         shirOffset:           n('setting-shir-offset', 25),
         tamhanaOffset:        n('setting-tamhana-offset', 25),
     };
@@ -191,7 +191,7 @@ function resetShabbatSettings() {
     set('setting-arvit-cap', '20:15');
     set('setting-arvit-min-gap', 30);
     set('setting-mincha-shabbat-summer', '17:00');
-    set('setting-mincha-shabbat-winter', '12:45');
+    set('setting-mincha-shabbat-winter', '12:40');
     set('setting-shir-offset', 25);
     set('setting-tamhana-offset', 25);
 }
